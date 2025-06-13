@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #dde7ff, #f6f8ff);
+  margin: 0;
+  padding: 0;
+}
+
+.chat-container {
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+h2 {
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 1.5rem;
+}
+
+.chat-box {
+  height: 450px;
+  overflow-y: auto;
+  border-radius: 18px;
+  background: #f9fbff;
+  padding: 1.2rem;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+  padding: 14px 20px;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 18px;
+  margin-bottom: 1rem;
+  word-wrap: break-word;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.message.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #7b2ff7, #f107a3); /* Purple to pink */
+  color: #fff;
+  border-top-right-radius: 6px;
+  box-shadow: 0 4px 12px rgba(123, 47, 247, 0.4);
+}
+
+.message.bot {
+  align-self: flex-start;
+  background: linear-gradient(135deg, #f3e7ff, #e6e6fa); /* Light lavender */
+  color: #1a1a1a;
+  border-top-left-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+.timestamp {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.typing-indicator {
+  font-style: italic;
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+.chat-input-wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  background: #ffffff;
+  padding: 0.75rem 1.2rem;
+  border-radius: 50px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.chat-input-wrapper input {
+  flex: 1;
+  border: none;
+  font-size: 1rem;
+  background: transparent;
+  outline: none;
+  padding: 0.6rem;
+}
+
+.chat-input-wrapper button {
+  background-color: #7b2ff7; /* Matches the user bubble */
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+
+.chat-input-wrapper button:hover {
+  background-color: #6610f2;
+}
+
+.emoji-button,
+.mic-button {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #7b2ff7;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: color 0.3s ease;
+}
+
+.emoji-button:hover,
+.mic-button:hover {
+  color: #000;
+}
+.message.assistant {
+  background-color: #f3f3f3;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.emotion-tag {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 4px;
+}
+.download-button {
+  margin-bottom: 10px;
+  background-color: #e0e0e0;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.download-button:hover {
+  background-color: #d0d0d0;
+}
