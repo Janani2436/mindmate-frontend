@@ -1,29 +1,23 @@
+// client/src/pages/RegisterPage.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../utils/axiosInstance'; // ✅ Use configured axios instance
-
 const RegisterPage = () => {
-  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
+    setLoading(true);
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/register`, {
-  username,
-  password,
-});
+      await axios.post('/api/auth/register', { username, password });
 
 
-      setSuccess('✅ Registration successful!');
+      setMessage('✅ Registered successfully! Redirecting to login...');
       setUsername('');
       setPassword('');
 
@@ -31,50 +25,70 @@ const RegisterPage = () => {
         navigate('/login');
       }, 1500);
     } catch (err) {
-      setError('❌ Registration failed. Try a different username.');
+      console.error(err);
+      setMessage('❌ Registration failed. Username might already exist.');
     }
+    setLoading(false);
   };
 
   return (
-    <div style={{ marginTop: '2rem' }}>
-      <h2>📝 Register</h2>
+    <div style={{
+      maxWidth: '400px',
+      margin: '2rem auto',
+      padding: '2rem',
+      backgroundColor: '#fefefe',
+      borderRadius: '10px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+    }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>📝 Register</h2>
       <form onSubmit={handleRegister}>
         <div>
-          <label>Username:</label><br />
+          <label>Username:</label>
           <input
             type="text"
             value={username}
-            required
             onChange={(e) => setUsername(e.target.value)}
+            required
+            style={{ width: '100%', padding: '10px', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ccc' }}
           />
         </div>
-        <div style={{ marginTop: '1rem' }}>
-          <label>Password:</label><br />
+        <div>
+          <label>Password:</label>
           <input
             type="password"
             value={password}
-            required
             onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ width: '100%', padding: '10px', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ccc' }}
           />
         </div>
         <button
           type="submit"
+          disabled={loading}
           style={{
-            marginTop: '1rem',
-            padding: '6px 12px',
-            background: '#4CAF50',
+            width: '100%',
+            padding: '12px',
+            backgroundColor: '#ff6b6b',
             color: 'white',
             border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            cursor: loading ? 'not-allowed' : 'pointer'
           }}
         >
-          Register
+          {loading ? 'Registering...' : 'Register'}
         </button>
       </form>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+      {message && (
+        <p style={{
+          marginTop: '1rem',
+          color: message.includes('✅') ? 'green' : 'red',
+          textAlign: 'center',
+          fontWeight: '500'
+        }}>
+          {message}
+        </p>
+      )}
     </div>
   );
 };

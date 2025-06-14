@@ -1,17 +1,16 @@
 // client/src/pages/HomePage.js
 import React from 'react';
 import { Link } from 'react-router-dom';
- 
 
 const HomePage = () => {
   const buttonStyle = {
     padding: '10px 20px',
     fontSize: '1rem',
-    backgroundColor: '#6c63ff',
     color: 'white',
     border: 'none',
     borderRadius: '8px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
   };
 
   return (
@@ -33,9 +32,9 @@ const HomePage = () => {
         Your personal space to reflect, track your emotions, and grow emotionally.
       </p>
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
         <Link to="/login">
-          <button style={buttonStyle}>
+          <button style={{ ...buttonStyle, backgroundColor: '#6c63ff' }}>
             Login
           </button>
         </Link>
@@ -53,8 +52,8 @@ const HomePage = () => {
         </Link>
       </div>
 
-      {/* 📸 Show the selfie capture feature here */}
-      
+      {/* 📸 You can add your selfie feature here in the future */}
+
     </div>
   );
 };

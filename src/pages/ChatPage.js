@@ -3,7 +3,7 @@ import axios from '../utils/axiosInstance';
 import EmojiPicker from 'emoji-picker-react';
 import './ChatPage.css';
 import { useAuthContext } from '../context/AuthContext';
-import axiosInstance from '../utils/axiosInstance';
+//import axiosInstance from '../utils/axiosInstance';
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');

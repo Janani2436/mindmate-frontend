@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from '../utils/axiosInstance';
 import MoodHistory from '../components/MoodHistory';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../utils/axiosInstance';
+
 const MoodHistoryPage = () => {
   const [moods, setMoods] = useState([]);
   const navigate = useNavigate();
