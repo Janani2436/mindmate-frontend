@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/axiosInstance'; // ✅ Use configured axios instance
 
@@ -15,10 +17,11 @@ const RegisterPage = () => {
     setSuccess('');
 
     try {
-      await axiosInstance.post('/api/auth/register', {
-        username,
-        password,
-      });
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/register`, {
+  username,
+  password,
+});
+
 
       setSuccess('✅ Registration successful!');
       setUsername('');
