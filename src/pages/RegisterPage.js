@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../utils/axiosInstance'; // ✅ Use configured axios instance
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -15,22 +15,21 @@ const RegisterPage = () => {
     setSuccess('');
 
     try {
-      await axios.post('http://localhost:5000/api/auth/register', {
+      await axiosInstance.post('/api/auth/register', {
         username,
         password,
       });
-    
+
       setSuccess('✅ Registration successful!');
       setUsername('');
       setPassword('');
-    
+
       setTimeout(() => {
         navigate('/login');
       }, 1500);
     } catch (err) {
       setError('❌ Registration failed. Try a different username.');
     }
-    
   };
 
   return (
