@@ -1,7 +1,6 @@
-// client/src/pages/RegisterPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../utils/axiosInstance'; // ✅ Use configured instance
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -15,7 +14,6 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       await axios.post('/api/auth/register', { username, password });
-
 
       setMessage('✅ Registered successfully! Redirecting to login...');
       setUsername('');
