@@ -1,7 +1,6 @@
-// client/src/pages/LoginPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../utils/axiosInstance'; // ✅ use custom instance
+import axios from '../utils/axiosInstance'; // ✅ Use custom axios
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -14,7 +13,7 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('/auth/login', { username, password }); // ✅ no need for /api
+      const res = await axios.post('/api/auth/login', { username, password });
 
       localStorage.setItem('token', res.data.token);
       setMessage('✅ Login successful!');
@@ -22,7 +21,7 @@ const LoginPage = () => {
       setPassword('');
 
       setTimeout(() => {
-        navigate('/chat'); // Redirect to Chat page
+        navigate('/chat');
       }, 1000);
     } catch (err) {
       console.error(err);
