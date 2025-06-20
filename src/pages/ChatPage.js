@@ -3,7 +3,7 @@ import axios from '../utils/axiosInstance';
 import EmojiPicker from 'emoji-picker-react';
 import './ChatPage.css';
 import { useAuthContext } from '../context/AuthContext';
-//import axiosInstance from '../utils/axiosInstance';
+
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -46,7 +46,7 @@ const ChatPage = () => {
 
         let backendMessages = [];
         if (token) {
-          const res = await axios.get('/api/chat/history');
+          const res = await axios.get('/chat/history'); // ✅ FIXED
           backendMessages = res.data.flatMap(chat =>
             chat.messages.map(msg => ({
               sender: msg.role === 'user' ? 'user' : 'bot',
@@ -128,11 +128,9 @@ const ChatPage = () => {
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-
     link.href = url;
     link.download = 'mindmate_chat.txt';
     link.click();
-
     URL.revokeObjectURL(url);
   };
 
@@ -140,7 +138,6 @@ const ChatPage = () => {
     if (!input.trim()) return;
 
     const userTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
     const updatedMessages = [...messages, { sender: 'user', text: input, time: userTime }];
     setMessages(updatedMessages);
     setInput('');
@@ -148,7 +145,7 @@ const ChatPage = () => {
     setShowEmojiPicker(false);
 
     try {
-      const res = await axios.post('/api/chat', {
+      const res = await axios.post('/chat', { // ✅ FIXED
         message: input,
         language: selectedLanguage
       });

@@ -1,7 +1,7 @@
 // client/src/pages/LoginPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../utils/axiosInstance'; // ✅ use custom instance
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -14,7 +14,7 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('/api/auth/login', { username, password });
+      const res = await axios.post('/auth/login', { username, password }); // ✅ no need for /api
 
       localStorage.setItem('token', res.data.token);
       setMessage('✅ Login successful!');

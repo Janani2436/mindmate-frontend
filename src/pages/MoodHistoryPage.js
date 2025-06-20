@@ -19,7 +19,7 @@ const MoodHistoryPage = () => {
 
   const fetchMoods = async () => {
     try {
-      const res = await axios.get('/api/mood');
+      const res = await axios.get('/mood'); // ✅ Removed /api
       setMoods(res.data);
     } catch (err) {
       console.error(err);
@@ -28,7 +28,7 @@ const MoodHistoryPage = () => {
 
   const deleteMood = async (id) => {
     try {
-      await axios.delete(`/api/mood/${id}`);
+      await axios.delete(`/mood/${id}`); // ✅ Removed /api
       setMoods((prev) => prev.filter((mood) => mood._id !== id));
     } catch (err) {
       console.error(err);
