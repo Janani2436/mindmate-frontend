@@ -1,5 +1,6 @@
+// src/pages/ChatPage.js
 import React, { useState, useRef, useEffect } from 'react';
-import axios from '../utils/axiosInstance';
+import axios from '../utils/axiosInstance'; // ✅ Custom axios instance
 import EmojiPicker from 'emoji-picker-react';
 import './ChatPage.css';
 import { useAuthContext } from '../context/AuthContext';
@@ -11,7 +12,6 @@ const ChatPage = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
-
   const chatBoxRef = useRef(null);
   const recognitionRef = useRef(null);
   const { token } = useAuthContext();
@@ -43,10 +43,10 @@ const ChatPage = () => {
     const loadMessages = async () => {
       try {
         const localMessages = JSON.parse(localStorage.getItem('mindmate_messages')) || [];
-
         let backendMessages = [];
+
         if (token) {
-          const res = await axios.get('/chat/history'); // ✅ FIXED
+          const res = await axios.get('/api/chat/history'); // ✅ Use prefixed route
           backendMessages = res.data.flatMap(chat =>
             chat.messages.map(msg => ({
               sender: msg.role === 'user' ? 'user' : 'bot',
@@ -78,29 +78,21 @@ const ChatPage = () => {
   }, [messages]);
 
   useEffect(() => {
-    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-      console.warn('Speech recognition not supported');
-      return;
-    }
-
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
-    recognition.lang = selectedLanguage === 'en' ? 'en-US' : selectedLanguage;
+    recognition.lang = selectedLanguage;
     recognition.interimResults = false;
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
       setInput(prev => prev + ' ' + transcript);
     };
 
-    recognition.onerror = (e) => {
-      console.error('Speech recognition error:', e);
-      setIsListening(false);
-    };
-
+    recognition.onerror = () => setIsListening(false);
     recognition.onend = () => setIsListening(false);
-
     recognitionRef.current = recognition;
   }, [selectedLanguage]);
 
@@ -111,27 +103,9 @@ const ChatPage = () => {
   };
 
   const speak = (text) => {
-    if (!window.speechSynthesis) return;
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = selectedLanguage === 'en' ? 'en-US' : selectedLanguage;
+    utterance.lang = selectedLanguage;
     window.speechSynthesis.speak(utterance);
-  };
-
-  const downloadChatAsTxt = () => {
-    const content = messages.map(msg => {
-      const time = `[${msg.time}]`;
-      const sender = msg.sender === 'user' ? 'You' : 'MindMate';
-      const emotionTag = msg.emotion ? ` (${getEmotionLabel(msg.emotion)})` : '';
-      return `${time} ${sender}${emotionTag}: ${msg.text}`;
-    }).join('\n\n');
-
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'mindmate_chat.txt';
-    link.click();
-    URL.revokeObjectURL(url);
   };
 
   const handleSend = async () => {
@@ -145,7 +119,7 @@ const ChatPage = () => {
     setShowEmojiPicker(false);
 
     try {
-      const res = await axios.post('/chat', { // ✅ FIXED
+      const res = await axios.post('/api/chat', {
         message: input,
         language: selectedLanguage
       });
@@ -159,12 +133,9 @@ const ChatPage = () => {
       ]);
 
       speak(reply);
-    } catch (err) {
+    } catch {
       const errorMsg = '⚠️ Sorry, something went wrong.';
-      setMessages([
-        ...updatedMessages,
-        { sender: 'bot', text: errorMsg, time: userTime }
-      ]);
+      setMessages([...updatedMessages, { sender: 'bot', text: errorMsg, time: userTime }]);
       speak(errorMsg);
     } finally {
       setIsTyping(false);
@@ -188,24 +159,14 @@ const ChatPage = () => {
     <div className="chat-container">
       <h2>💬 Talk to MindMate</h2>
 
-      {/* Language Selector */}
-      <div style={{ marginBottom: '10px' }}>
-        🌐 <label htmlFor="language-select">Language:</label>
-        <select
-          id="language-select"
-          value={selectedLanguage}
-          onChange={(e) => setSelectedLanguage(e.target.value)}
-          style={{ marginLeft: '8px', padding: '4px' }}
-        >
+      <div>
+        🌐 Language:
+        <select value={selectedLanguage} onChange={(e) => setSelectedLanguage(e.target.value)}>
           {languages.map(lang => (
             <option key={lang.code} value={lang.code}>{lang.label}</option>
           ))}
         </select>
       </div>
-
-      <button onClick={downloadChatAsTxt} className="download-button">
-        📄 Download Chat
-      </button>
 
       <div className="chat-box" ref={chatBoxRef}>
         {messages.map((msg, i) => (
@@ -224,32 +185,20 @@ const ChatPage = () => {
       </div>
 
       <div className="chat-input-wrapper">
-        <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="emoji-button">😊</button>
-
+        <button onClick={() => setShowEmojiPicker(!showEmojiPicker)}>😊</button>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder="Type your message or use voice..."
+          placeholder="Type a message..."
         />
-
-        <button onClick={toggleListening} className="mic-button" type="button">
-          {isListening ? '🛑' : '🎤'}
-        </button>
-
+        <button onClick={toggleListening}>{isListening ? '🛑' : '🎤'}</button>
         <button onClick={handleSend}>Send</button>
-
-        {showEmojiPicker && (
-          <div className="emoji-picker">
-            <EmojiPicker onEmojiClick={handleEmojiClick} height={300} />
-          </div>
-        )}
+        {showEmojiPicker && <EmojiPicker onEmojiClick={handleEmojiClick} height={300} />}
       </div>
 
-      <div className="chat-footer">
-        <button onClick={handleClearChat} className="clear-button">🧹 Clear Chat</button>
-      </div>
+      <button onClick={handleClearChat}>🧹 Clear Chat</button>
     </div>
   );
 };
