@@ -7,11 +7,10 @@ const MoodHistory = () => {
   const [mood, setMood] = useState('');
   const [note, setNote] = useState('');
 
-  // Fetch moods on mount
   useEffect(() => {
     const fetchMoods = async () => {
       try {
-        const res = await axios.get('/mood');
+        const res = await axios.get('/api/mood');  // ✅ Fixed
         setMoods(res.data);
       } catch (err) {
         console.error('Error fetching moods:', err);
@@ -26,8 +25,8 @@ const MoodHistory = () => {
     if (!mood.trim()) return;
 
     try {
-      const res = await axios.post('/mood', { mood, note });
-      setMoods([res.data, ...moods]); // add new mood to top
+      const res = await axios.post('/api/mood', { mood, note });  // ✅ Fixed
+      setMoods([res.data, ...moods]);
       setMood('');
       setNote('');
     } catch (err) {
@@ -38,7 +37,7 @@ const MoodHistory = () => {
   const deleteMood = async (id) => {
     if (window.confirm('Are you sure you want to delete this mood?')) {
       try {
-        await axios.delete(`/mood/${id}`);
+        await axios.delete(`/api/mood/${id}`);  // ✅ Fixed
         setMoods(moods.filter((m) => m._id !== id));
       } catch (err) {
         console.error('Error deleting mood:', err);
