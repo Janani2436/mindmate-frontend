@@ -1,25 +1,55 @@
-import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
 
 // 1. Create the Auth Context
 const AuthContext = createContext();
 
-// 2. AuthProvider to wrap the entire app
+// 2. AuthProvider to wrap the app
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const checkToken = () => {
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          const now = Date.now() / 1000;
+
+          if (decoded.exp < now) {
+            // Token already expired
+            logout();
+          } else {
+            // Auto logout when token expires
+            const timeout = (decoded.exp - now) * 1000;
+            const timer = setTimeout(() => {
+              logout();
+            }, timeout);
+
+            return () => clearTimeout(timer);
+          }
+        } catch (err) {
+          console.error('❌ Invalid token. Logging out...', err);
+          logout();
+        }
+      }
+    };
+
+    checkToken();
     setLoading(false);
-  }, []);
+  }, [token]);
 
   const login = (newToken) => {
-    localStorage.setItem("token", newToken);
+    localStorage.setItem('token', newToken);
     setToken(newToken);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setToken(null);
+    navigate('/login');
   };
 
   const value = useMemo(() => ({
@@ -27,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated: !!token,
-    loading, // ✅ fixed!
+    loading,
   }), [token, loading]);
 
   return (
