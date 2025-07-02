@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axiosInstance'; // ✅ Use custom axios
+import { useAuthContext } from '../context/AuthContext'; // ✅ Import context
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -8,19 +9,26 @@ const RegisterPage = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuthContext(); // ✅ use login from context
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
+      // First: Register the user
       await axios.post('/api/auth/register', { username, password });
 
-      setMessage('✅ Registered successfully! Redirecting to login...');
+      // Then: Log in immediately
+      const res = await axios.post('/api/auth/login', { username, password });
+
+      const token = res.data.token;
+      login(token); // ✅ set token in context
+      setMessage('✅ Registered and logged in! Redirecting...');
       setUsername('');
       setPassword('');
 
       setTimeout(() => {
-        navigate('/login');
+        navigate('/chat');
       }, 1500);
     } catch (err) {
       console.error(err);

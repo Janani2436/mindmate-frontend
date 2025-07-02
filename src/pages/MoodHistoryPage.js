@@ -2,36 +2,29 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../utils/axiosInstance';
 import MoodHistory from '../components/MoodHistory';
-import { useNavigate } from 'react-router-dom';
 
 const MoodHistoryPage = () => {
   const [moods, setMoods] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-    } else {
-      fetchMoods();
-    }
-  }, [navigate]);
+    fetchMoods();
+  }, []);
 
   const fetchMoods = async () => {
     try {
-      const res = await axios.get('/mood'); // ✅ Removed /api
+      const res = await axios.get('/mood');
       setMoods(res.data);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching moods:', err);
     }
   };
 
   const deleteMood = async (id) => {
     try {
-      await axios.delete(`/mood/${id}`); // ✅ Removed /api
+      await axios.delete(`/mood/${id}`);
       setMoods((prev) => prev.filter((mood) => mood._id !== id));
     } catch (err) {
-      console.error(err);
+      console.error('Error deleting mood:', err);
     }
   };
 

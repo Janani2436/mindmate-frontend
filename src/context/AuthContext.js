@@ -1,37 +1,34 @@
-import { createContext, useState, useEffect, useContext, useMemo } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 
-// Create the AuthContext
+// 1. Create the Auth Context
 const AuthContext = createContext();
 
-// AuthProvider to wrap the app and provide auth state
+// 2. AuthProvider to wrap the entire app
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      setUser({ token }); // In a real app, decode or fetch user info here
-    }
     setLoading(false);
-  }, [token]);
+  }, []);
 
-  const login = (token) => {
-    localStorage.setItem("token", token);
-    setToken(token);
-    setUser({ token });
+  const login = (newToken) => {
+    localStorage.setItem("token", newToken);
+    setToken(newToken);
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
-    setUser(null);
   };
 
-  const value = useMemo(
-    () => ({ user, token, login, logout, loading }),
-    [user, token, loading]
-  );
+  const value = useMemo(() => ({
+    token,
+    login,
+    logout,
+    isAuthenticated: !!token,
+    loading, // ✅ fixed!
+  }), [token, loading]);
 
   return (
     <AuthContext.Provider value={value}>
@@ -40,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook to access auth context
+// 3. Custom hook
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {

@@ -1,6 +1,8 @@
+// src/pages/LoginPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../utils/axiosInstance'; // ✅ Use custom axios
+import axios from '../utils/axiosInstance';
+import { useAuthContext } from '../context/AuthContext';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -8,27 +10,28 @@ const LoginPage = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuthContext(); // ✅ USE CONTEXT LOGIN
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post('/api/auth/login', { username, password });
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const res = await axios.post('/api/auth/login', { username, password });
 
-      localStorage.setItem('token', res.data.token);
-      setMessage('✅ Login successful!');
-      setUsername('');
-      setPassword('');
+    localStorage.setItem('token', res.data.token);
+    login(res.data.token); // ✅ UPDATE CONTEXT STATE
 
-      setTimeout(() => {
-        navigate('/chat');
-      }, 1000);
-    } catch (err) {
-      console.error(err);
-      setMessage('❌ Invalid credentials');
-    }
-    setLoading(false);
-  };
+    setMessage('✅ Login successful!');
+    setUsername('');
+    setPassword('');
+
+    navigate('/chat'); // ✅ Redirect immediately
+  } catch (err) {
+    console.error(err);
+    setMessage('❌ Invalid credentials');
+  }
+  setLoading(false);
+};
 
   return (
     <div style={{

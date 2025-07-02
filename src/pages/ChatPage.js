@@ -1,9 +1,10 @@
 // src/pages/ChatPage.js
 import React, { useState, useRef, useEffect } from 'react';
-import axios from '../utils/axiosInstance'; // ✅ Custom axios instance
+import axios from '../utils/axiosInstance';
 import EmojiPicker from 'emoji-picker-react';
 import './ChatPage.css';
 import { useAuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
@@ -15,6 +16,7 @@ const ChatPage = () => {
   const chatBoxRef = useRef(null);
   const recognitionRef = useRef(null);
   const { token } = useAuthContext();
+  const navigate = useNavigate();
 
   const languages = [
     { code: 'en', label: 'English' },
@@ -45,26 +47,33 @@ const ChatPage = () => {
         const localMessages = JSON.parse(localStorage.getItem('mindmate_messages')) || [];
         let backendMessages = [];
 
-        if (token) {
-          const res = await axios.get('/api/chat/history'); // ✅ Use prefixed route
-          backendMessages = res.data.flatMap(chat =>
-            chat.messages.map(msg => ({
-              sender: msg.role === 'user' ? 'user' : 'bot',
-              text: msg.content,
-              emotion: msg.emotion || null,
-              time: new Date(chat.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }))
-          );
+        if (!token) {
+          navigate('/login');
+          return;
         }
+
+        const res = await axios.get('/api/chat/history');
+        backendMessages = res.data.flatMap(chat =>
+          chat.messages.map(msg => ({
+            sender: msg.role === 'user' ? 'user' : 'bot',
+            text: msg.content,
+            emotion: msg.emotion || null,
+            time: new Date(chat.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }))
+        );
 
         setMessages([...backendMessages, ...localMessages]);
       } catch (err) {
         console.error('Failed to load messages:', err);
+        if (err.response?.status === 401) {
+          localStorage.removeItem('token');
+          navigate('/login');
+        }
       }
     };
 
     loadMessages();
-  }, [token]);
+  }, [token, navigate]);
 
   useEffect(() => {
     localStorage.setItem('mindmate_messages', JSON.stringify(messages));
@@ -133,7 +142,7 @@ const ChatPage = () => {
       ]);
 
       speak(reply);
-    } catch {
+    } catch (err) {
       const errorMsg = '⚠️ Sorry, something went wrong.';
       setMessages([...updatedMessages, { sender: 'bot', text: errorMsg, time: userTime }]);
       speak(errorMsg);
