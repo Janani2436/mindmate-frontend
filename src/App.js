@@ -7,19 +7,19 @@ import HomePage from './pages/HomePage';
 import ChatPage from './pages/ChatPage';
 import LogoutButton from './components/LogoutButton';
 import PrivateRoute from './components/PrivateRoute';
-import { AuthProvider } from './context/AuthContext'; // ✅ Wrap everything inside AuthProvider
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <div style={{ padding: '1rem' }}>
           <nav style={{ marginBottom: '1rem' }}>
-            <Link to="/" style={{ marginRight: '1rem' }}>Home</Link>
-            <Link to="/login" style={{ marginRight: '1rem' }}>Login</Link>
-            <Link to="/register" style={{ marginRight: '1rem' }}>Register</Link>
-            <Link to="/history" style={{ marginRight: '1rem' }}>Mood History</Link>
-            <Link to="/chat" style={{ marginRight: '1rem' }}>Chat</Link>
+            <Link to="/">Home</Link>{' '}
+            <Link to="/login">Login</Link>{' '}
+            <Link to="/register">Register</Link>{' '}
+            <Link to="/history">Mood History</Link>{' '}
+            <Link to="/chat">Chat</Link>{' '}
             <LogoutButton />
           </nav>
 
@@ -45,8 +45,8 @@ function App() {
             />
           </Routes>
         </div>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 

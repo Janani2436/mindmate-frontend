@@ -1,4 +1,3 @@
-// src/pages/LoginPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axiosInstance';
@@ -10,28 +9,24 @@ const LoginPage = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuthContext(); // ✅ USE CONTEXT LOGIN
+  const { login } = useAuthContext();
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    const res = await axios.post('/api/auth/login', { username, password });
-
-    localStorage.setItem('token', res.data.token);
-    login(res.data.token); // ✅ UPDATE CONTEXT STATE
-
-    setMessage('✅ Login successful!');
-    setUsername('');
-    setPassword('');
-
-    navigate('/chat'); // ✅ Redirect immediately
-  } catch (err) {
-    console.error(err);
-    setMessage('❌ Invalid credentials');
-  }
-  setLoading(false);
-};
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await axios.post('/api/auth/login', { username, password });
+      login(res.data.token); // ✅ Handles context + localStorage
+      setMessage('✅ Login successful!');
+      setUsername('');
+      setPassword('');
+      setTimeout(() => navigate('/chat'), 1000); // ⏳ optional delay
+    } catch (err) {
+      console.error(err);
+      setMessage('❌ Invalid credentials');
+    }
+    setLoading(false);
+  };
 
   return (
     <div style={{
@@ -81,6 +76,7 @@ const LoginPage = () => {
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
+
       {message && (
         <p style={{
           marginTop: '1rem',
@@ -91,6 +87,11 @@ const LoginPage = () => {
           {message}
         </p>
       )}
+
+      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
+        Don’t have an account?{' '}
+        <a href="/register" style={{ color: '#6c63ff', textDecoration: 'none' }}>Register</a>
+      </p>
     </div>
   );
 };

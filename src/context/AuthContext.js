@@ -1,16 +1,11 @@
 import { createContext, useContext, useEffect, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode from 'jwt-decode'; // ✅ Make sure this works with v3.1.2 or default export
 
-
-// 1. Create the Auth Context
 const AuthContext = createContext();
 
-// 2. AuthProvider to wrap the app
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const checkToken = () => {
@@ -20,10 +15,8 @@ export const AuthProvider = ({ children }) => {
           const now = Date.now() / 1000;
 
           if (decoded.exp < now) {
-            // Token already expired
             logout();
           } else {
-            // Auto logout when token expires
             const timeout = (decoded.exp - now) * 1000;
             const timer = setTimeout(() => {
               logout();
@@ -50,7 +43,6 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
-    navigate('/login');
   };
 
   const value = useMemo(() => ({
@@ -68,7 +60,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// 3. Custom hook
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
