@@ -1,0 +1,66 @@
+/* client/src/pages/HomePage.css */
+.homepage {
+  background: #e9efff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.white-box {
+  background: white;
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  max-width: 800px;
+  width: 100%;
+}
+
+.highlight {
+  color: #6b5bff;
+  font-weight: bold;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.home-btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.2s;
+}
+
+.home-btn:hover {
+  transform: translateY(-3px);
+}
+
+.home-btn.login {
+  background: #6b5bff;
+}
+
+.home-btn.register {
+  background: #ff6b6b;
+}
+
+.home-btn.chat {
+  background: #00c896;
+}
+
+.home-btn.videochat {
+  background: #ff4ec4;
+}
+
+.home-btn.detect {
+  background: #ffaa2b;
+}

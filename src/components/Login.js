@@ -1,47 +1,94 @@
-// client/src/components/Login.js
 import React, { useState } from 'react';
 import axios from '../utils/axiosInstance';
+import { useAuthContext } from '../context/AuthContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuthContext();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const res = await axios.post('/auth/login', { username, password });
-      localStorage.setItem('token', res.data.token);
-      setMessage('Login successful!');
-      // You can redirect using window.location or React Router if added
+      const res = await axios.post('/api/auth/login', { username, password });
+      login(res.data.token); // ✅ just login and update context
+      setMessage('✅ Login successful!');
+      setUsername('');
+      setPassword('');
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Login failed');
+      console.error(err);
+      setMessage('❌ Invalid credentials');
     }
+    setLoading(false);
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto' }}>
-      <h2>Login</h2>
+    <div style={{
+      maxWidth: '400px',
+      margin: '2rem auto',
+      padding: '2rem',
+      backgroundColor: '#fefefe',
+      borderRadius: '10px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+    }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>🔐 Login</h2>
       <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          style={{ display: 'block', marginBottom: '1rem', width: '100%' }}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ display: 'block', marginBottom: '1rem', width: '100%' }}
-        />
-        <button type="submit">Login</button>
+        <div>
+          <label>Username:</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            style={{ width: '100%', padding: '10px', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ width: '100%', padding: '10px', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            width: '100%',
+            padding: '12px',
+            backgroundColor: '#6c63ff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            cursor: loading ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
-      {message && <p style={{ marginTop: '1rem' }}>{message}</p>}
+
+      {message && (
+        <p style={{
+          marginTop: '1rem',
+          color: message.includes('✅') ? 'green' : 'red',
+          textAlign: 'center',
+          fontWeight: '500'
+        }}>
+          {message}
+        </p>
+      )}
+
+      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
+        Don’t have an account?{' '}
+        <a href="/register" style={{ color: '#6c63ff', textDecoration: 'none' }}>Register</a>
+      </p>
     </div>
   );
 };

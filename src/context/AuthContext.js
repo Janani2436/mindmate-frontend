@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useMemo } from 'react';
-import jwtDecode from 'jwt-decode'; // ✅ Make sure this works with v3.1.2 or default export
+import jwtDecode from 'jwt-decode';
 
 const AuthContext = createContext();
 
@@ -8,6 +8,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let logoutTimer;
+
     const checkToken = () => {
       if (token) {
         try {
@@ -15,24 +17,25 @@ export const AuthProvider = ({ children }) => {
           const now = Date.now() / 1000;
 
           if (decoded.exp < now) {
+            console.warn('⏰ Token expired. Logging out...');
             logout();
           } else {
             const timeout = (decoded.exp - now) * 1000;
-            const timer = setTimeout(() => {
-              logout();
-            }, timeout);
-
-            return () => clearTimeout(timer);
+            logoutTimer = setTimeout(logout, timeout);
           }
         } catch (err) {
           console.error('❌ Invalid token. Logging out...', err);
           logout();
         }
       }
+      setLoading(false);
     };
 
     checkToken();
-    setLoading(false);
+
+    return () => {
+      if (logoutTimer) clearTimeout(logoutTimer);
+    };
   }, [token]);
 
   const login = (newToken) => {
@@ -63,7 +66,7 @@ export const AuthProvider = ({ children }) => {
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuthContext must be used within an AuthProvider");
+    throw new Error('useAuthContext must be used within an AuthProvider');
   }
   return context;
 };

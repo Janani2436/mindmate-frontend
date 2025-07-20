@@ -1,59 +1,25 @@
 // client/src/pages/HomePage.js
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './HomePage.css'; // ⬅️ we'll define styles here
 
 const HomePage = () => {
-  const buttonStyle = {
-    padding: '10px 20px',
-    fontSize: '1rem',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease'
-  };
-
   return (
-    <div style={{
-      textAlign: 'center',
-      marginTop: '4rem',
-      padding: '2rem',
-      background: '#f9f9f9',
-      borderRadius: '12px',
-      maxWidth: '600px',
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-    }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-        Welcome to <span style={{ color: '#6c63ff' }}>MindMate</span> 🧠💬
-      </h1>
-      <p style={{ fontSize: '1.2rem', marginBottom: '2rem' }}>
-        Your personal space to reflect, track your emotions, and grow emotionally.
-      </p>
+    <div className="homepage">
+      <div className="white-box">
+        <h1>
+          Welcome to <span className="highlight">MindMate</span> 🧠💬
+        </h1>
+        <p>Your personal space to reflect, track your emotions, and grow emotionally.</p>
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-        <Link to="/login">
-          <button style={{ ...buttonStyle, backgroundColor: '#6c63ff' }}>
-            Login
-          </button>
-        </Link>
-
-        <Link to="/register">
-          <button style={{ ...buttonStyle, backgroundColor: '#ff6b6b' }}>
-            Register
-          </button>
-        </Link>
-
-        <Link to="/chat">
-          <button style={{ ...buttonStyle, backgroundColor: '#00b894' }}>
-            Chat 💬
-          </button>
-        </Link>
+        <div className="button-group">
+          <Link to="/login" className="home-btn login">🔒 Login</Link>
+          <Link to="/register" className="home-btn register">📝 Register</Link>
+          <Link to="/chat" className="home-btn chat">💬 Chat</Link>
+          <Link to="/videochat" className="home-btn videochat">🤖 Video Chat</Link>
+          <Link to="/detect" className="home-btn detect">😄 Emotion Detector</Link>
+        </div>
       </div>
-
-      {/* 📸 You can add your selfie feature here in the future */}
-
     </div>
   );
 };

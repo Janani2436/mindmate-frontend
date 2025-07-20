@@ -1,38 +1,28 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
+import LogoutButton from './LogoutButton';
 
 const Navbar = () => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const { isAuthenticated, loading } = useAuthContext();
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
+  if (loading) return null; // Avoid flickering
 
   return (
-    <nav
-      style={{
-        display: 'flex',
-        gap: '1rem',
-        padding: '1rem',
-        background: '#f5f5f5',
-        borderBottom: '1px solid #ddd',
-      }}
-    >
-      {token && (
+    <nav style={{ padding: '1rem', backgroundColor: '#f0f4ff' }}>
+      <Link to="/">Home</Link>{" | "}
+      {!isAuthenticated ? (
         <>
-          <Link to="/">Mood Form</Link>
-          <Link to="/history">History</Link>
-          <button onClick={handleLogout} style={{ marginLeft: 'auto' }}>
-            Logout
-          </button>
-        </>
-      )}
-      {!token && (
-        <>
-          <Link to="/login">Login</Link>
+          <Link to="/login">Login</Link>{" | "}
           <Link to="/register">Register</Link>
+        </>
+      ) : (
+        <>
+          <Link to="/history">Mood History</Link>{" | "}
+          <Link to="/chat">Chat</Link>{" | "}
+          <Link to="/videochat">Video Chat</Link>{" | "}
+          <Link to="/detect">Emotion Detector</Link>{" | "}
+          <LogoutButton />
         </>
       )}
     </nav>
