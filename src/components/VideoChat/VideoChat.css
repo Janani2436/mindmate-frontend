@@ -96,3 +96,11 @@ textarea {
 .btn-group button:hover {
   opacity: 0.9;
 }
+.lottie-avatar {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+.language-selector {
+  margin-bottom: 1.2em;
+}

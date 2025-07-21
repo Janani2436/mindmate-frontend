@@ -1,5 +1,3 @@
-// client/src/components/VideoChat/VideoChat.js
-
 import React, { useEffect, useRef, useState } from 'react';
 import Lottie from 'lottie-react';
 import animationData from './aiAnimation.json';
@@ -8,13 +6,44 @@ import { useAuthContext } from '../../context/AuthContext';
 import axios from '../../utils/axiosInstance';
 import './VideoChat.css';
 
+const LANGUAGES = {
+  en: 'English',
+  es: 'Spanish',
+  fr: 'French',
+  de: 'German',
+  hi: 'Hindi',
+  zh: 'Chinese',
+  ar: 'Arabic',
+  ja: 'Japanese',
+};
+
+// --- Animated Avatar with Play/Stop Logic ---
+function AnimatedAvatar({ isSpeaking }) {
+  const lottieRef = useRef();
+  useEffect(() => {
+    const l = lottieRef.current;
+    if (!l) return;
+    if (isSpeaking) l.play();
+    else l.stop();
+  }, [isSpeaking]);
+  return (
+    <Lottie
+      lottieRef={lottieRef}
+      animationData={animationData}
+      loop
+      autoplay={false}
+      className="lottie-avatar"
+    />
+  );
+}
+
 const VideoChat = () => {
   const [aiReply, setAiReply] = useState('');
   const [message, setMessage] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isAiReplying, setIsAiReplying] = useState(false);
   const videoRef = useRef(null);
-  const lottieRef = useRef();
   const { token } = useAuthContext();
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
@@ -22,9 +51,7 @@ const VideoChat = () => {
     const getUserVideo = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
+        if (videoRef.current) videoRef.current.srcObject = stream;
       } catch (err) {
         console.error('❌ Error accessing webcam:', err);
       }
@@ -33,22 +60,18 @@ const VideoChat = () => {
   }, []);
 
   useEffect(() => {
-    if (!listening && transcript) {
-      setMessage(transcript);
-    }
+    if (!listening && transcript) setMessage(transcript);
   }, [listening, transcript]);
 
   const handleSend = async () => {
     if (!message.trim()) return;
-
     setIsAiReplying(true);
-    lottieRef.current?.play();
 
     try {
       const res = await axios.post(
         '/api/ai/videochat',
-        { prompt: message },
-        { headers: { Authorization: `Bearer ${token}` }, timeout: 15000 }
+        { prompt: message, language: selectedLanguage },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       const reply = res.data?.response || '🤖 AI didn’t reply.';
       setAiReply(reply);
@@ -56,17 +79,19 @@ const VideoChat = () => {
     } catch (err) {
       console.error('❌ AI Error:', err.message);
       setAiReply('❌ AI failed to respond.');
+      setIsSpeaking(false);
     } finally {
       setIsAiReplying(false);
       setMessage('');
       resetTranscript();
-      lottieRef.current?.stop();
     }
   };
 
+  // Sync speaking state to avatar animation
   const speakReply = (text) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
+    if (!window.speechSynthesis) return;
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    utterance.lang = selectedLanguage;
     utterance.pitch = 1.2;
     utterance.rate = 1;
     utterance.onstart = () => setIsSpeaking(true);
@@ -76,40 +101,38 @@ const VideoChat = () => {
 
   const handleStartSpeech = () => {
     resetTranscript();
-    SpeechRecognition.startListening({ continuous: false });
+    SpeechRecognition.startListening({ continuous: false, language: selectedLanguage });
   };
 
   return (
     <div className="video-chat-container">
-      <h2 className="video-chat-heading">💬 Real-Time AI Video Chat</h2>
-
+      <h2 className="video-chat-heading">💬 Real-Time Multilingual AI Video Chat</h2>
+      <div className="language-selector">
+        🌍 Language:
+        <select value={selectedLanguage} onChange={e => setSelectedLanguage(e.target.value)}>
+          {Object.entries(LANGUAGES).map(([code, name]) => (
+            <option key={code} value={code}>{name}</option>
+          ))}
+        </select>
+      </div>
       <div className="video-call-box">
         <div className="user-video-box">
           <video ref={videoRef} autoPlay muted playsInline />
           <p className="video-label">👤 You</p>
         </div>
-
         <div className="ai-video-box">
-          <Lottie
-            lottieRef={lottieRef}
-            animationData={animationData}
-            loop={isAiReplying}
-            autoplay={false}
-            className="lottie-avatar"
-          />
+          <AnimatedAvatar isSpeaking={isSpeaking || isAiReplying} />
           <p className="video-label">🤖 MindMate AI</p>
         </div>
       </div>
-
       <div className="chat-box">
         <strong>AI:</strong> {isAiReplying ? 'Typing...' : aiReply || 'Waiting...'}
       </div>
-
       <div className="chat-box">
         <textarea
           placeholder="Type or speak your message..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={e => setMessage(e.target.value)}
           disabled={listening}
         />
         <div className="btn-group">
