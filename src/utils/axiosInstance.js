@@ -1,4 +1,4 @@
-// src/utils/axiosInstance.js
+// client/src/utils/axiosInstance.js
 import axios from 'axios';
 
 const instance = axios.create({
@@ -25,7 +25,7 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/login'; // 🔁 Redirect on token failure
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
