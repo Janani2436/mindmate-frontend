@@ -1,27 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from '../utils/axiosInstance';
 
 const MoodForm = () => {
   const [mood, setMood] = useState('');
   const [note, setNote] = useState('');
   const [message, setMessage] = useState('');
+  const [showReflection, setShowReflection] = useState(false);
+  const [reflection, setReflection] = useState('');
+
+  useEffect(() => {
+    setShowReflection(["sad", "anxious", "angry"].includes(mood));
+  }, [mood]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await axios.post('/mood', {
-        mood,
-        note,
-      });
-
+      // ✅ FIXED: Correct route with /api prefix
+      const res = await axios.post('/api/mood', { mood, note });
       setMessage('Mood saved successfully!');
       setMood('');
       setNote('');
     } catch (err) {
       setMessage('Something went wrong. Try again!');
-      console.error(err);
     }
+  };
+
+  const handleReflectionSave = () => {
+    alert("Reflection saved. Thank you for sharing!");
+    setShowReflection(false);
+    setReflection('');
   };
 
   return (
@@ -35,7 +42,7 @@ const MoodForm = () => {
             value={mood}
             onChange={(e) => setMood(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', marginBottom: '1rem' }}
+            style={{ width: '100%', padding: 8, marginBottom: 16 }}
           />
         </div>
         <div>
@@ -43,14 +50,34 @@ const MoodForm = () => {
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            style={{ width: '100%', padding: '8px', marginBottom: '1rem' }}
-          ></textarea>
+            style={{ width: '100%', padding: 8, marginBottom: 16 }}
+          />
         </div>
-        <button type="submit" style={{ padding: '10px 20px' }}>
-          Save Mood
-        </button>
+        <button type="submit" style={{ padding: '10px 20px' }}>Save Mood</button>
       </form>
-      {message && <p style={{ marginTop: '1rem' }}>{message}</p>}
+      {message && <p>{message}</p>}
+
+      {showReflection && (
+        <div style={{ background: '#ffe0b2', padding: 14, borderRadius: 10, marginTop: 16 }}>
+          <h4>Want to talk about it?</h4>
+          <textarea
+            placeholder="Write what's bothering you..."
+            value={reflection}
+            onChange={e => setReflection(e.target.value)}
+            rows={4}
+            style={{ width: '95%', borderRadius: 8, border: '1px solid #ccc' }}
+          />
+          <button onClick={handleReflectionSave} style={{
+            marginTop: 8,
+            background: '#eee',
+            padding: '7px 15px',
+            borderRadius: 20,
+            border: 'none',
+          }}>
+            Save Reflection
+          </button>
+        </div>
+      )}
     </div>
   );
 };

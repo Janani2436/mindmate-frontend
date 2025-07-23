@@ -1,9 +1,10 @@
-// src/pages/ChatPage.js
 import React, { useState, useRef, useEffect } from 'react';
 import axios from '../utils/axiosInstance';
 import EmojiPicker from 'emoji-picker-react';
 import './ChatPage.css';
 import { useAuthContext } from '../context/AuthContext';
+import { useThemeMood } from '../context/ThemeMoodContext';
+import MainLayout from '../components/MainLayout'; // ✅ Import wrapper
 import { useNavigate } from 'react-router-dom';
 
 const ChatPage = () => {
@@ -16,6 +17,7 @@ const ChatPage = () => {
   const chatBoxRef = useRef(null);
   const recognitionRef = useRef(null);
   const { token } = useAuthContext();
+  const { setMood } = useThemeMood(); // ✅ use setMood from context
   const navigate = useNavigate();
 
   const languages = [
@@ -136,6 +138,12 @@ const ChatPage = () => {
       const { reply, emotion } = res.data;
       const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+      // ✅ Update page mood context if AI replies with an emotion
+      if (emotion) {
+        setMood(emotion);
+        localStorage.setItem('latestMood', emotion);
+      }
+
       setMessages([
         ...updatedMessages,
         { sender: 'bot', text: reply, time: botTime, emotion }
@@ -165,50 +173,53 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="chat-container">
-      <h2>💬 Talk to MindMate</h2>
+    <MainLayout> {/* ✅ Wrap entire chat in MainLayout */}
+      <div className="chat-container">
+        <h2>💬 Talk to MindMate</h2>
 
-      <div>
-        🌐 Language:
-        <select value={selectedLanguage} onChange={(e) => setSelectedLanguage(e.target.value)}>
-          {languages.map(lang => (
-            <option key={lang.code} value={lang.code}>{lang.label}</option>
-          ))}
-        </select>
-      </div>
+        <div>
+          🌐 Language:&nbsp;
+          <select value={selectedLanguage} onChange={(e) => setSelectedLanguage(e.target.value)}>
+            {languages.map(lang => (
+              <option key={lang.code} value={lang.code}>{lang.label}</option>
+            ))}
+          </select>
+        </div>
 
-      <div className="chat-box" ref={chatBoxRef}>
-        {messages.map((msg, i) => (
-          <div key={i} className={`message ${msg.sender}`}>
-            <div className="message-header">
-              <strong>{msg.sender === 'user' ? 'You' : 'MindMate'}</strong>
-              <span className="timestamp">{msg.time}</span>
+        <div className="chat-box" ref={chatBoxRef}>
+          {messages.map((msg, i) => (
+            <div key={i} className={`message ${msg.sender}`}>
+              <div className="message-header">
+                <strong>{msg.sender === 'user' ? 'You' : 'MindMate'}</strong>
+                <span className="timestamp">{msg.time}</span>
+              </div>
+              {msg.sender === 'bot' && msg.emotion && (
+                <div className="emotion-tag">{getEmotionLabel(msg.emotion)}</div>
+              )}
+              <div className="message-text">{msg.text}</div>
             </div>
-            {msg.sender === 'bot' && msg.emotion && (
-              <div className="emotion-tag">{getEmotionLabel(msg.emotion)}</div>
-            )}
-            <div className="message-text">{msg.text}</div>
-          </div>
-        ))}
-        {isTyping && <div className="typing-indicator"><em>MindMate is typing...</em></div>}
-      </div>
+          ))}
+          {isTyping && <div className="typing-indicator"><em>MindMate is typing...</em></div>}
+        </div>
 
-      <div className="chat-input-wrapper">
-        <button onClick={() => setShowEmojiPicker(!showEmojiPicker)}>😊</button>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder="Type a message..."
-        />
-        <button onClick={toggleListening}>{isListening ? '🛑' : '🎤'}</button>
-        <button onClick={handleSend}>Send</button>
+        <div className="chat-input-wrapper">
+          <button onClick={() => setShowEmojiPicker(!showEmojiPicker)}>😊</button>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyPress}
+            placeholder="Type a message..."
+          />
+          <button onClick={toggleListening}>{isListening ? '🛑' : '🎤'}</button>
+          <button onClick={handleSend}>Send</button>
+        </div>
+
         {showEmojiPicker && <EmojiPicker onEmojiClick={handleEmojiClick} height={300} />}
-      </div>
 
-      <button onClick={handleClearChat}>🧹 Clear Chat</button>
-    </div>
+        <button onClick={handleClearChat}>🧹 Clear Chat</button>
+      </div>
+    </MainLayout>
   );
 };
 

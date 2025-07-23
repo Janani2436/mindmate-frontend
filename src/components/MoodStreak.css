@@ -1,0 +1,63 @@
+/* 🟢 Mood Streak Badge Styles */
+.streak-box {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.streak-badge {
+  color: #3949ab;
+  background: #fff7e8;
+  padding: 12px 20px;
+  border-radius: 30px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.12em;
+  font-weight: 500;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(223, 212, 171, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* 🧘 Emotion-Adaptive Wellness Cards */
+.wellness-card {
+  background: var(--card-bg, #f9fbfc);
+  border-left: 5px solid #8bc34a;
+  padding: 16px 20px;
+  margin: 22px auto;
+  max-width: 610px;
+  border-radius: 10px;
+  box-shadow: 0 0 13px rgba(0, 0, 0, 0.09);
+  transition: background 0.3s ease-in-out;
+}
+
+.wellness-card.happy {
+  border-left: 5px solid #ffd600;
+}
+
+/* 🎯 Action Buttons */
+.breathe-btn,
+.gratitude-btn {
+  background: #b3e5fc;
+  border: none;
+  padding: 7px 18px;
+  border-radius: 22px;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.breathe-btn:hover,
+.gratitude-btn:hover {
+  background: #81d4fa;
+}
+
+/* 📝 Reflection Journal Block */
+.reflection-block {
+  background: #ffe0b2;
+  padding: 14px 12px;
+  border-radius: 10px;
+  margin: 16px 0;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.05);
+}

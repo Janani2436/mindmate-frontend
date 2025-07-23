@@ -11,3 +11,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/* client/src/index.css */
+/* Added at the bottom of index.css */
+body[data-mood="happy"] {
+  --bg: #FFFDE7;
+}
+body[data-mood="calm"] {
+  --bg: #E0F7FA;
+}
+body[data-mood="sad"] {
+  --bg: #ECEFF1;
+}
+body[data-mood="angry"] {
+  --bg: #FFEBEE;
+}
+body[data-mood="anxious"] {
+  --bg: #FFFDE7;
+}
+body[data-mood="neutral"] {
+  --bg: #FAFAFA;
+}

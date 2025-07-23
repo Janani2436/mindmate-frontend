@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+body {
+  --bg: #FAFAFA;
+  --primary: #BDBDBD;
+  --accent: #757575;
+  transition: background 0.4s ease-in-out;
+}
+
+[data-mood="happy"]   { --bg: #FFFDE7; --primary: #FFD54F; --accent: #FFA000; }
+[data-mood="sad"]     { --bg: #ECEFF1; --primary: #90CAF9; --accent: #1565C0; }
+[data-mood="angry"]   { --bg: #FFEBEE; --primary: #EF5350; --accent: #C62828; }
+[data-mood="anxious"] { --bg: #FFFDE7; --primary: #FFF176; --accent: #F57F17; }
+[data-mood="neutral"] { --bg: #FAFAFA; --primary: #BDBDBD; --accent: #757575; }
+[data-mood="calm"]    { --bg: #E0F7FA; --primary: #4DD0E1; --accent: #00838F; }
+

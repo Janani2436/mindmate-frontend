@@ -1,10 +1,10 @@
+// VideoChat.js
 import React, { useEffect, useRef, useState } from 'react';
 import Lottie from 'lottie-react';
 import animationData from './aiAnimation.json';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { useAuthContext } from '../../context/AuthContext';
 import axios from '../../utils/axiosInstance';
-import './VideoChat.css';
 
 const LANGUAGES = {
   en: 'English',
@@ -17,24 +17,13 @@ const LANGUAGES = {
   ja: 'Japanese',
 };
 
-// --- Animated Avatar with Play/Stop Logic ---
 function AnimatedAvatar({ isSpeaking }) {
   const lottieRef = useRef();
   useEffect(() => {
-    const l = lottieRef.current;
-    if (!l) return;
-    if (isSpeaking) l.play();
-    else l.stop();
+    isSpeaking ? lottieRef.current?.play() : lottieRef.current?.stop();
   }, [isSpeaking]);
-  return (
-    <Lottie
-      lottieRef={lottieRef}
-      animationData={animationData}
-      loop
-      autoplay={false}
-      className="lottie-avatar"
-    />
-  );
+
+  return <Lottie lottieRef={lottieRef} animationData={animationData} loop autoplay={false} className="lottie-avatar" />;
 }
 
 const VideoChat = () => {
@@ -48,15 +37,9 @@ const VideoChat = () => {
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
   useEffect(() => {
-    const getUserVideo = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if (videoRef.current) videoRef.current.srcObject = stream;
-      } catch (err) {
-        console.error('❌ Error accessing webcam:', err);
-      }
-    };
-    getUserVideo();
+    navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+      if (videoRef.current) videoRef.current.srcObject = stream;
+    });
   }, []);
 
   useEffect(() => {
@@ -66,6 +49,7 @@ const VideoChat = () => {
   const handleSend = async () => {
     if (!message.trim()) return;
     setIsAiReplying(true);
+    setAiReply('');
 
     try {
       const res = await axios.post(
@@ -77,8 +61,12 @@ const VideoChat = () => {
       setAiReply(reply);
       speakReply(reply);
     } catch (err) {
-      console.error('❌ AI Error:', err.message);
-      setAiReply('❌ AI failed to respond.');
+      if (err.code === 'ECONNABORTED') {
+        setAiReply("⏱ The AI is taking too long. Please try again.");
+      } else {
+        console.error('❌ AI Error:', err.message);
+        setAiReply('❌ AI failed to respond.');
+      }
       setIsSpeaking(false);
     } finally {
       setIsAiReplying(false);
@@ -87,16 +75,14 @@ const VideoChat = () => {
     }
   };
 
-  // Sync speaking state to avatar animation
   const speakReply = (text) => {
-    if (!window.speechSynthesis) return;
-    const utterance = new window.SpeechSynthesisUtterance(text);
-    utterance.lang = selectedLanguage;
-    utterance.pitch = 1.2;
-    utterance.rate = 1;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    window.speechSynthesis.speak(utterance);
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = selectedLanguage;
+    utter.pitch = 1.1;
+    utter.rate = 1;
+    utter.onstart = () => setIsSpeaking(true);
+    utter.onend = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utter);
   };
 
   const handleStartSpeech = () => {
@@ -107,14 +93,16 @@ const VideoChat = () => {
   return (
     <div className="video-chat-container">
       <h2 className="video-chat-heading">💬 Real-Time Multilingual AI Video Chat</h2>
+
       <div className="language-selector">
         🌍 Language:
         <select value={selectedLanguage} onChange={e => setSelectedLanguage(e.target.value)}>
-          {Object.entries(LANGUAGES).map(([code, name]) => (
-            <option key={code} value={code}>{name}</option>
+          {Object.entries(LANGUAGES).map(([code, label]) => (
+            <option key={code} value={code}>{label}</option>
           ))}
         </select>
       </div>
+
       <div className="video-call-box">
         <div className="user-video-box">
           <video ref={videoRef} autoPlay muted playsInline />
@@ -125,23 +113,21 @@ const VideoChat = () => {
           <p className="video-label">🤖 MindMate AI</p>
         </div>
       </div>
+
       <div className="chat-box">
         <strong>AI:</strong> {isAiReplying ? 'Typing...' : aiReply || 'Waiting...'}
       </div>
+
       <div className="chat-box">
         <textarea
           placeholder="Type or speak your message..."
           value={message}
-          onChange={e => setMessage(e.target.value)}
+          onChange={(e) => setMessage(e.target.value)}
           disabled={listening}
         />
         <div className="btn-group">
-          <button className="speak-btn" onClick={handleStartSpeech}>
-            🎤 {listening ? 'Listening...' : 'Speak'}
-          </button>
-          <button className="send-btn" onClick={handleSend}>
-            📨 Send
-          </button>
+          <button onClick={handleStartSpeech}>🎤 {listening ? 'Listening...' : 'Speak'}</button>
+          <button onClick={handleSend}>📨 Send</button>
         </div>
       </div>
     </div>
