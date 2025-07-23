@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../utils/axiosInstance'; // ✅ Use custom axios
-import { useAuthContext } from '../context/AuthContext'; // ✅ Import context
+import axios from '../utils/axiosInstance';
+import { useAuthContext } from '../context/AuthContext';
+import './Auth.css'; // ✅ new shared style file for login & register
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -9,27 +10,21 @@ const RegisterPage = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuthContext(); // ✅ use login from context
+  const { login } = useAuthContext();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // First: Register the user
       await axios.post('/api/auth/register', { username, password });
 
-      // Then: Log in immediately
       const res = await axios.post('/api/auth/login', { username, password });
+      login(res.data.token);
 
-      const token = res.data.token;
-      login(token); // ✅ set token in context
       setMessage('✅ Registered and logged in! Redirecting...');
       setUsername('');
       setPassword('');
-
-      setTimeout(() => {
-        navigate('/chat');
-      }, 1500);
+      setTimeout(() => navigate('/chat'), 1500);
     } catch (err) {
       console.error(err);
       setMessage('❌ Registration failed. Username might already exist.');
@@ -38,63 +33,39 @@ const RegisterPage = () => {
   };
 
   return (
-    <div style={{
-      maxWidth: '400px',
-      margin: '2rem auto',
-      padding: '2rem',
-      backgroundColor: '#fefefe',
-      borderRadius: '10px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-    }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>📝 Register</h2>
+    <div className="auth-box">
+      <h2>📝 Register for MindMate</h2>
       <form onSubmit={handleRegister}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{ width: '100%', padding: '10px', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '10px', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '12px',
-            backgroundColor: '#ff6b6b',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontWeight: 'bold',
-            cursor: loading ? 'not-allowed' : 'pointer'
-          }}
-        >
+        <label>Username</label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          placeholder="Enter a unique username"
+        />
+
+        <label>Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          placeholder="Choose a strong password"
+        />
+
+        <button type="submit" disabled={loading}>
           {loading ? 'Registering...' : 'Register'}
         </button>
+
+        {message && (
+          <div
+            className={`auth-msg ${message.includes('✅') ? 'success' : 'error'}`}
+          >
+            {message}
+          </div>
+        )}
       </form>
-      {message && (
-        <p style={{
-          marginTop: '1rem',
-          color: message.includes('✅') ? 'green' : 'red',
-          textAlign: 'center',
-          fontWeight: '500'
-        }}>
-          {message}
-        </p>
-      )}
     </div>
   );
 };

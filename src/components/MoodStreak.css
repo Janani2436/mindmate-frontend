@@ -1,63 +1,61 @@
-/* 🟢 Mood Streak Badge Styles */
 .streak-box {
+  margin: 1.1rem auto 2rem auto;
+  background: linear-gradient(90deg, #fffbe6 60%, #e0f7fa 100%);
+  border-radius: 14px;
+  box-shadow: 0 4px 14px 0 rgba(255, 185, 0, 0.09);
+  padding: 1.2rem 2rem 1.3rem 2rem;
+  max-width: 520px;
   text-align: center;
-  margin-bottom: 18px;
+  animation: fadeIn 0.6s;
 }
 
 .streak-badge {
-  color: #3949ab;
-  background: #fff7e8;
-  padding: 12px 20px;
-  border-radius: 30px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  font-size: 1.12em;
-  font-weight: 500;
-  gap: 6px;
-  box-shadow: 0 2px 8px rgba(223, 212, 171, 0.2);
-  transition: all 0.3s ease;
+  justify-content: center;
+  gap: 8px;
+  background: #fffde7;
+  border: 1.5px solid #ffd54f;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #ad7600;
+  padding: 0.63rem 1.6rem;
+  font-size: 1.2rem;
+  margin-bottom: 0.7rem;
+  box-shadow: 0 2px 8px 0 rgba(255, 193, 7, 0.11);
+  transition: background 0.21s, border 0.21s;
 }
 
-/* 🧘 Emotion-Adaptive Wellness Cards */
-.wellness-card {
-  background: var(--card-bg, #f9fbfc);
-  border-left: 5px solid #8bc34a;
-  padding: 16px 20px;
-  margin: 22px auto;
-  max-width: 610px;
-  border-radius: 10px;
-  box-shadow: 0 0 13px rgba(0, 0, 0, 0.09);
-  transition: background 0.3s ease-in-out;
+.streak-badge.elite {
+  background: linear-gradient(90deg, #ffe082 75%, #bbdefb 100%);
+  border-color: #90caf9;
+  color: #064271;
+  font-size: 1.23rem;
 }
 
-.wellness-card.happy {
-  border-left: 5px solid #ffd600;
+.streak-badge strong {
+  color: #ff9800;
 }
 
-/* 🎯 Action Buttons */
-.breathe-btn,
-.gratitude-btn {
-  background: #b3e5fc;
-  border: none;
-  padding: 7px 18px;
-  border-radius: 22px;
-  margin-bottom: 8px;
-  font-weight: bold;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background 0.3s ease;
+.streak-longest {
+  font-size: 1.01rem;
+  color: #636363;
+  margin-top: 7px;
 }
 
-.breathe-btn:hover,
-.gratitude-btn:hover {
-  background: #81d4fa;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px);}
+  to   { opacity: 1; transform: translateY(0);}
 }
 
-/* 📝 Reflection Journal Block */
-.reflection-block {
-  background: #ffe0b2;
-  padding: 14px 12px;
-  border-radius: 10px;
-  margin: 16px 0;
-  box-shadow: 0 0 7px rgba(0, 0, 0, 0.05);
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .streak-box {
+    padding: 1rem 0.5rem;
+    font-size: 0.95rem;
+  }
+  .streak-badge {
+    font-size: 1.07rem;
+    padding: 0.48rem 0.7rem;
+  }
 }

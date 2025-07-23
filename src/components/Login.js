@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ Navigation for redirect
 import axios from '../utils/axiosInstance';
 import { useAuthContext } from '../context/AuthContext';
+import '../pages/Auth.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -8,16 +10,18 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuthContext();
+  const navigate = useNavigate(); // ✅
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await axios.post('/api/auth/login', { username, password });
-      login(res.data.token); // ✅ just login and update context
+      login(res.data.token);   // set token in AuthContext
       setMessage('✅ Login successful!');
       setUsername('');
       setPassword('');
+      setTimeout(() => navigate('/chat'), 800); // ✅ redirect to /chat after a short delay
     } catch (err) {
       console.error(err);
       setMessage('❌ Invalid credentials');
@@ -26,68 +30,40 @@ const Login = () => {
   };
 
   return (
-    <div style={{
-      maxWidth: '400px',
-      margin: '2rem auto',
-      padding: '2rem',
-      backgroundColor: '#fefefe',
-      borderRadius: '10px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-    }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>🔐 Login</h2>
+    <div className="auth-box">
+      <h2>🔐 Login to MindMate</h2>
       <form onSubmit={handleLogin}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{ width: '100%', padding: '10px', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '10px', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '12px',
-            backgroundColor: '#6c63ff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontWeight: 'bold',
-            cursor: loading ? 'not-allowed' : 'pointer'
-          }}
-        >
+        <label>Username</label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          placeholder="Enter your username"
+        />
+
+        <label>Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          placeholder="Enter your password"
+        />
+
+        <button type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </button>
+
+        {message && (
+          <div className={`auth-msg ${message.includes('✅') ? 'success' : 'error'}`}>
+            {message}
+          </div>
+        )}
       </form>
 
-      {message && (
-        <p style={{
-          marginTop: '1rem',
-          color: message.includes('✅') ? 'green' : 'red',
-          textAlign: 'center',
-          fontWeight: '500'
-        }}>
-          {message}
-        </p>
-      )}
-
-      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
-        Don’t have an account?{' '}
-        <a href="/register" style={{ color: '#6c63ff', textDecoration: 'none' }}>Register</a>
+      <p className="auth-alt-link">
+        Don’t have an account? <a href="/register">Register</a>
       </p>
     </div>
   );

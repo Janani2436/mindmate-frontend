@@ -1,28 +1,36 @@
-// client/src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MoodHistoryPage from './pages/MoodHistoryPage';
-import HomePage from './pages/HomePage';
 import ChatPage from './pages/ChatPage';
-import PrivateRoute from './components/PrivateRoute';
-import { AuthProvider } from './context/AuthContext';
-import { ThemeMoodProvider } from './context/ThemeMoodContext';
 import VideoChat from './components/VideoChat/VideoChat';
-import Navbar from './components/Navbar';
 import EmotionDetector from './components/EmotionDetector';
+
+import PrivateRoute from './components/PrivateRoute';
+import Navbar from './components/Navbar';
+
+import { ThemeMoodProvider } from './context/ThemeMoodContext';
+import { AuthProvider } from './context/AuthContext';
+
+import './App.css'; // Global CSS (includes mood variables, fonts, etc.)
 
 function App() {
   return (
-    <Router>
+    <ThemeMoodProvider>
       <AuthProvider>
-        <ThemeMoodProvider>
+        <Router>
+          {/* ✅ Navbar should have access to both Theme + Auth */}
           <Navbar />
+
           <Routes>
             <Route path="/" element={<HomePage />} />
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+
             <Route path="/detect" element={<EmotionDetector />} />
 
             <Route
@@ -33,6 +41,7 @@ function App() {
                 </PrivateRoute>
               }
             />
+
             <Route
               path="/chat"
               element={
@@ -41,6 +50,7 @@ function App() {
                 </PrivateRoute>
               }
             />
+
             <Route
               path="/videochat"
               element={
@@ -49,18 +59,25 @@ function App() {
                 </PrivateRoute>
               }
             />
+
+            {/* 🌐 404 Fallback */}
             <Route
               path="*"
               element={
-                <h2 className="text-center mt-8 text-red-500 text-xl">
-                  404 - Page Not Found
-                </h2>
+                <div style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+                  <h2 style={{ color: '#d32f2f', fontSize: '1.8rem' }}>
+                    🚫 404 - Page Not Found
+                  </h2>
+                  <p style={{ fontSize: '1rem', color: '#777', marginTop: '1rem' }}>
+                    The page you're looking for doesn't exist or has been moved.
+                  </p>
+                </div>
               }
             />
           </Routes>
-        </ThemeMoodProvider>
+        </Router>
       </AuthProvider>
-    </Router>
+    </ThemeMoodProvider>
   );
 }
 

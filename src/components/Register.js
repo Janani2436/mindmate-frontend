@@ -1,46 +1,76 @@
-// client/src/components/Register.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axiosInstance';
+import './Auth.css';
 
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate(); // ✅
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post('/auth/register', { username, password });
-      localStorage.setItem('token', res.data.token);
-      setMessage('Registered and logged in!');
+
+      if (res?.data?.token) {
+        localStorage.setItem('token', res.data.token);
+      }
+
+      setMessage('✅ Registered and logged in! Redirecting...');
+      setUsername('');
+      setPassword('');
+
+      setTimeout(() => navigate('/chat'), 1000); // ✅ redirect to /chat
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Registration failed');
+      console.error('Registration Error:', err);
+      setMessage(
+        err.response?.data?.message || '❌ Registration failed. Try again.'
+      );
     }
+    setLoading(false);
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto' }}>
-      <h2>Register</h2>
+    <div className="auth-box">
+      <h2>📝 Create an Account</h2>
       <form onSubmit={handleRegister}>
+        <label>Username</label>
         <input
           type="text"
-          placeholder="Username"
+          placeholder="Your username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
-          style={{ display: 'block', marginBottom: '1rem', width: '100%' }}
         />
+
+        <label>Password</label>
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Your secure password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={{ display: 'block', marginBottom: '1rem', width: '100%' }}
         />
-        <button type="submit">Register</button>
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registering...' : 'Register'}
+        </button>
+
+        {message && (
+          <div className={`auth-msg ${message.includes('✅') ? 'success' : 'error'}`}>
+            {message}
+          </div>
+        )}
       </form>
-      {message && <p style={{ marginTop: '1rem' }}>{message}</p>}
+
+      <p className="auth-alt-link">
+        Already have an account? <a href="/login">Login instead</a>
+      </p>
     </div>
   );
 };

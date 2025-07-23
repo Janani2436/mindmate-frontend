@@ -1,21 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as faceapi from 'face-api.js';
+import './EmotionDetector.css'; // Create styles here
 
 const EmotionDetector = () => {
   const videoRef = useRef(null);
   const [emotion, setEmotion] = useState('');
 
-  // Load models
   const loadModels = async () => {
     const MODEL_URL = process.env.PUBLIC_URL + '/models';
     await Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
       faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-      faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+      faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
     ]);
   };
 
-  // Start webcam
   const startVideo = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true })
@@ -44,6 +43,8 @@ const EmotionDetector = () => {
         if (detections && detections.expressions) {
           const sorted = Object.entries(detections.expressions).sort((a, b) => b[1] - a[1]);
           setEmotion(sorted[0][0]);
+        } else {
+          setEmotion('');
         }
       }
     }, 1000);
@@ -51,11 +52,39 @@ const EmotionDetector = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const getEmoji = (emotion) => {
+    const map = {
+      happy: '😊',
+      sad: '😢',
+      angry: '😠',
+      surprised: '😮',
+      fearful: '😨',
+      disgusted: '🤢',
+      neutral: '😐',
+    };
+    return map[emotion] || '❓';
+  };
+
   return (
-    <div>
-      <h2>Emotion Detector</h2>
-      <video ref={videoRef} autoPlay muted width="480" height="360" style={{ borderRadius: '10px' }} />
-      <h3>Detected Emotion: {emotion || 'No face detected'}</h3>
+    <div className="emotion-detector-container">
+      <h2 className="title">🎥 Real-Time Emotion Detector</h2>
+      <div className="camera-card">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          width="100%"
+          height="auto"
+          className="camera-video"
+        />
+      </div>
+      <div className="emotion-display">
+        <h3>
+          {emotion
+            ? `${getEmoji(emotion)} Detected Emotion: ${emotion.toUpperCase()}`
+            : '😶 No face detected'}
+        </h3>
+      </div>
     </div>
   );
 };

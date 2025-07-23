@@ -13,18 +13,18 @@ export const AuthProvider = ({ children }) => {
     const checkToken = () => {
       if (token) {
         try {
-          const decoded = jwtDecode(token);
+          const { exp } = jwtDecode(token);
           const now = Date.now() / 1000;
 
-          if (decoded.exp < now) {
+          if (exp < now) {
             console.warn('⏰ Token expired. Logging out...');
             logout();
           } else {
-            const timeout = (decoded.exp - now) * 1000;
+            const timeout = (exp - now) * 1000;
             logoutTimer = setTimeout(logout, timeout);
           }
         } catch (err) {
-          console.error('❌ Invalid token. Logging out...', err);
+          console.error('❌ Invalid token. Forcing logout.', err);
           logout();
         }
       }

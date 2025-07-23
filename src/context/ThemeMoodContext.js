@@ -6,29 +6,51 @@ const ThemeMoodContext = createContext();
 export const ThemeMoodProvider = ({ children }) => {
   const [mood, setMoodState] = useState('neutral');
 
+  // Load from localStorage once on mount
   useEffect(() => {
     const stored = localStorage.getItem('latestMood');
-    if (stored && moodThemes[stored]) setMoodState(stored);
+    if (stored && moodThemes[stored]) {
+      setMoodState(stored);
+    }
   }, []);
 
+  // Apply mood-based styles
   useEffect(() => {
     const theme = moodThemes[mood] || moodThemes.neutral;
-    document.body.setAttribute('data-mood', mood);
-    document.body.style.setProperty('--bg', theme.bg);
-    document.body.style.setProperty('--primary', theme.primary);
-    document.body.style.setProperty('--accent', theme.accent);
+    const root = document.documentElement; // <html>
+
+    if (root) {
+      // Apply mood classes + attributes
+      root.setAttribute('data-mood', mood);
+
+      // Set CSS variables for --bg, --primary, --accent
+      root.style.setProperty('--bg', theme.bg);
+      root.style.setProperty('--primary', theme.primary);
+      root.style.setProperty('--accent', theme.accent);
+    }
+
     localStorage.setItem('latestMood', mood);
   }, [mood]);
 
   const setMood = (newMood) => {
-    setMoodState(moodThemes[newMood] ? newMood : 'neutral');
+    if (moodThemes[newMood]) {
+      setMoodState(newMood);
+    } else {
+      setMoodState('neutral');
+    }
   };
 
   return (
-    <ThemeMoodContext.Provider value={{ mood, setMood, theme: moodThemes[mood] || moodThemes.neutral }}>
+    <ThemeMoodContext.Provider
+      value={{ mood, setMood, theme: moodThemes[mood] || moodThemes.neutral }}
+    >
       {children}
     </ThemeMoodContext.Provider>
   );
 };
 
-export const useThemeMood = () => useContext(ThemeMoodContext);
+export const useThemeMood = () => {
+  const context = useContext(ThemeMoodContext);
+  if (!context) throw new Error('useThemeMood must be used within a ThemeMoodProvider');
+  return context;
+};

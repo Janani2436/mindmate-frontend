@@ -1,33 +1,119 @@
-body {
+/* ---------------------------------
+  Font Family
+--------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* Resets */
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--accent);
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background 0.4s ease-in-out, color 0.2s ease-in-out;
+  line-height: 1.6;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
-/* client/src/index.css */
-/* Added at the bottom of index.css */
+
+/* Global Theme Variables — default (neutral) */
+:root {
+  --bg: #FAFAFA;
+  --primary: #BDBDBD;
+  --accent: #757575;
+}
+
+/* Mood-specific overrides applied dynamically via `document.body.dataset.mood` */
 body[data-mood="happy"] {
   --bg: #FFFDE7;
+  --primary: #FFD54F;
+  --accent: #FFA000;
 }
 body[data-mood="calm"] {
   --bg: #E0F7FA;
+  --primary: #4DD0E1;
+  --accent: #00838F;
 }
 body[data-mood="sad"] {
   --bg: #ECEFF1;
+  --primary: #90CAF9;
+  --accent: #1565C0;
 }
 body[data-mood="angry"] {
   --bg: #FFEBEE;
+  --primary: #EF5350;
+  --accent: #C62828;
 }
 body[data-mood="anxious"] {
   --bg: #FFFDE7;
+  --primary: #FFF176;
+  --accent: #F57F17;
 }
 body[data-mood="neutral"] {
   --bg: #FAFAFA;
+  --primary: #BDBDBD;
+  --accent: #757575;
+}
+
+/* Optional: base font and UI spacing setup */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary);
+  font-weight: 700;
+  margin: 0 0 0.5em;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--primary);
+}
+
+button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s, box-shadow 0.25s;
+}
+button:hover {
+  background: var(--accent);
+}
+
+input, textarea {
+  border: 1px solid var(--primary);
+  background: #f8f8f8;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  transition: border 0.2s ease;
+}
+input:focus, textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+/* Light utility */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }

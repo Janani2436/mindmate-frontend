@@ -1,0 +1,22 @@
+/* Overlay that sits between mood animation and content */
+.background-filter-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  background-color: var(--bg-filter);
+  transition: background-color 0.4s ease;
+  mix-blend-mode: screen; /* soft overlay */
+  opacity: 0.8;
+}
+
+/* Mood filter styles (based on ThemeMoodContext + [data-mood]) */
+[data-mood="happy"]    { --bg-filter: rgba(255, 245, 157, 0.3); }
+[data-mood="sad"]      { --bg-filter: rgba(144, 202, 249, 0.25); }
+[data-mood="angry"]    { --bg-filter: rgba(239, 83, 80, 0.22); }
+[data-mood="anxious"]  { --bg-filter: rgba(255, 241, 118, 0.25); }
+[data-mood="calm"]     { --bg-filter: rgba(129, 212, 250, 0.25); }
+[data-mood="neutral"]  { --bg-filter: rgba(240, 240, 240, 0.15); }

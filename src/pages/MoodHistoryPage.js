@@ -2,32 +2,33 @@ import React, { useEffect, useState } from 'react';
 import axios from '../utils/axiosInstance';
 import MoodHistory from '../components/MoodHistory';
 import MoodGraph from '../components/MoodGraph';
-import MainLayout from '../components/MainLayout';
 import MoodStreak from '../components/MoodStreak';
+import MainLayout from '../components/MainLayout';
 import { useThemeMood } from '../context/ThemeMoodContext';
+import './MoodHistoryPage.css'; // ✅ We'll build this next
 
 const MoodHistoryPage = () => {
   const [moods, setMoods] = useState([]);
-  const { mood } = useThemeMood();
   const [showBreath, setShowBreath] = useState(false);
-
-  const fetchMoods = async () => {
-    try {
-      const res = await axios.get('/api/mood');
-      setMoods(res.data);
-    } catch (error) {
-      console.error('Error fetching moods:', error);
-    }
-  };
+  const { mood } = useThemeMood();
 
   useEffect(() => {
+    const fetchMoods = async () => {
+      try {
+        const res = await axios.get('/api/mood');
+        setMoods(res.data);
+      } catch (error) {
+        console.error('Error fetching moods:', error);
+      }
+    };
+
     fetchMoods();
   }, []);
 
   const deleteMood = async (id) => {
     try {
       await axios.delete(`/api/mood/${id}`);
-      setMoods((prev) => prev.filter((mood) => mood._id !== id));
+      setMoods((prev) => prev.filter((m) => m._id !== id));
     } catch (error) {
       console.error('Error deleting mood:', error);
     }
@@ -35,14 +36,20 @@ const MoodHistoryPage = () => {
 
   return (
     <MainLayout>
-      <div style={{ padding: '20px' }}>
-        <h1 style={{ textAlign: 'center', margin: '1rem 0' }}>📝 Your Mood Journal</h1>
+      <div className="mood-history-container">
+        <h1 className="heading">📝 Your Mood Journal</h1>
+
         <MoodStreak />
         <MoodGraph />
+
+        {/* 🌬️ Wellness card shown for intense emotions */}
         {['sad', 'anxious', 'angry'].includes(mood) && (
           <div className="wellness-card">
             <h4>🌬️ Take a Moment</h4>
-            <button onClick={() => setShowBreath((val) => !val)} className="breathe-btn">
+            <button
+              onClick={() => setShowBreath((prev) => !prev)}
+              className="breathe-btn"
+            >
               {showBreath ? 'Hide Exercise' : 'Start Breathing Exercise'}
             </button>
             {showBreath && (
@@ -50,30 +57,27 @@ const MoodHistoryPage = () => {
                 title="Breathing Exercise"
                 src="https://www.youtube.com/embed/SEfs5TJZ6Nk?autoplay=1&controls=0"
                 allow="autoplay"
-                style={{
-                  width: '100%',
-                  height: 180,
-                  border: 'none',
-                  borderRadius: 8,
-                  marginTop: 8,
-                }}
+                className="breathing-video"
               ></iframe>
             )}
-            <p>Inhale... Exhale... you got this!</p>
+            <p>Inhale... Exhale... You got this. 💜</p>
           </div>
         )}
+
+        {/* 🌿 Happy mood message */}
         {mood === 'happy' && (
           <div className="wellness-card happy">
             <h4>🌱 Spread the Good!</h4>
             <p>Gratitude challenge: Who or what made you smile today?</p>
             <button
-              onClick={() => alert("Gratitude saved! You're awesome. 💚")}
               className="gratitude-btn"
+              onClick={() => alert("Gratitude saved! You're awesome. 💚")}
             >
               Log Gratitude
             </button>
           </div>
         )}
+
         <MoodHistory moods={moods} deleteMood={deleteMood} />
       </div>
     </MainLayout>

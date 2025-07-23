@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from '../utils/axiosInstance';
 import EmojiPicker from 'emoji-picker-react';
-import './ChatPage.css';
+import './ChatPage.css'; // ✅ Use enhanced stylesheet
 import { useAuthContext } from '../context/AuthContext';
 import { useThemeMood } from '../context/ThemeMoodContext';
-import MainLayout from '../components/MainLayout'; // ✅ Import wrapper
+import MainLayout from '../components/MainLayout';
 import { useNavigate } from 'react-router-dom';
 
 const ChatPage = () => {
@@ -17,9 +17,10 @@ const ChatPage = () => {
   const chatBoxRef = useRef(null);
   const recognitionRef = useRef(null);
   const { token } = useAuthContext();
-  const { setMood } = useThemeMood(); // ✅ use setMood from context
+  const { setMood } = useThemeMood();
   const navigate = useNavigate();
 
+  // Supported languages
   const languages = [
     { code: 'en', label: 'English' },
     { code: 'es', label: 'Spanish' },
@@ -39,10 +40,13 @@ const ChatPage = () => {
       case 'angry': return '😠 Angry';
       case 'anxious': return '😰 Anxious';
       case 'lonely': return '🤗 Lonely';
+      case 'confused': return '😵 Confused';
+      case 'excited': return '🤩 Excited';
       default: return '🤖 Neutral';
     }
   };
 
+  // Fetch chat history
   useEffect(() => {
     const loadMessages = async () => {
       try {
@@ -55,12 +59,12 @@ const ChatPage = () => {
         }
 
         const res = await axios.get('/api/chat/history');
-        backendMessages = res.data.flatMap(chat =>
-          chat.messages.map(msg => ({
+        backendMessages = res.data.flatMap((chat) =>
+          chat.messages.map((msg) => ({
             sender: msg.role === 'user' ? 'user' : 'bot',
             text: msg.content,
             emotion: msg.emotion || null,
-            time: new Date(chat.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            time: new Date(chat.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           }))
         );
 
@@ -77,10 +81,12 @@ const ChatPage = () => {
     loadMessages();
   }, [token, navigate]);
 
+  // Save to local storage
   useEffect(() => {
     localStorage.setItem('mindmate_messages', JSON.stringify(messages));
   }, [messages]);
 
+  // Auto-scroll
   useEffect(() => {
     chatBoxRef.current?.scrollTo({
       top: chatBoxRef.current.scrollHeight,
@@ -88,6 +94,7 @@ const ChatPage = () => {
     });
   }, [messages]);
 
+  // Speech Recognition
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
@@ -99,7 +106,7 @@ const ChatPage = () => {
 
     recognition.onresult = (e) => {
       const transcript = e.results[0][0].transcript;
-      setInput(prev => prev + ' ' + transcript);
+      setInput((prev) => prev + ' ' + transcript);
     };
 
     recognition.onerror = () => setIsListening(false);
@@ -110,7 +117,7 @@ const ChatPage = () => {
   const toggleListening = () => {
     if (!recognitionRef.current) return;
     isListening ? recognitionRef.current.stop() : recognitionRef.current.start();
-    setIsListening(prev => !prev);
+    setIsListening((prev) => !prev);
   };
 
   const speak = (text) => {
@@ -132,13 +139,12 @@ const ChatPage = () => {
     try {
       const res = await axios.post('/api/chat', {
         message: input,
-        language: selectedLanguage
+        language: selectedLanguage,
       });
 
       const { reply, emotion } = res.data;
       const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      // ✅ Update page mood context if AI replies with an emotion
       if (emotion) {
         setMood(emotion);
         localStorage.setItem('latestMood', emotion);
@@ -146,7 +152,7 @@ const ChatPage = () => {
 
       setMessages([
         ...updatedMessages,
-        { sender: 'bot', text: reply, time: botTime, emotion }
+        { sender: 'bot', text: reply, time: botTime, emotion },
       ]);
 
       speak(reply);
@@ -164,7 +170,7 @@ const ChatPage = () => {
   };
 
   const handleEmojiClick = (emojiData) => {
-    setInput(prev => prev + emojiData.emoji);
+    setInput((prev) => prev + emojiData.emoji);
   };
 
   const handleClearChat = () => {
@@ -173,15 +179,20 @@ const ChatPage = () => {
   };
 
   return (
-    <MainLayout> {/* ✅ Wrap entire chat in MainLayout */}
+    <MainLayout>
       <div className="chat-container">
-        <h2>💬 Talk to MindMate</h2>
+        <h2 className="chat-heading">💬 Talk to MindMate</h2>
 
-        <div>
+        <div className="language-selector">
           🌐 Language:&nbsp;
-          <select value={selectedLanguage} onChange={(e) => setSelectedLanguage(e.target.value)}>
-            {languages.map(lang => (
-              <option key={lang.code} value={lang.code}>{lang.label}</option>
+          <select
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value)}
+          >
+            {languages.map((lang) => (
+              <option key={lang.code} value={lang.code}>
+                {lang.label}
+              </option>
             ))}
           </select>
         </div>
@@ -194,16 +205,28 @@ const ChatPage = () => {
                 <span className="timestamp">{msg.time}</span>
               </div>
               {msg.sender === 'bot' && msg.emotion && (
-                <div className="emotion-tag">{getEmotionLabel(msg.emotion)}</div>
+                <div className="emotion-tag">
+                  {getEmotionLabel(msg.emotion)}
+                </div>
               )}
               <div className="message-text">{msg.text}</div>
             </div>
           ))}
-          {isTyping && <div className="typing-indicator"><em>MindMate is typing...</em></div>}
+          {isTyping && (
+            <div className="typing-indicator">
+              <em>MindMate is typing...</em>
+            </div>
+          )}
         </div>
 
         <div className="chat-input-wrapper">
-          <button onClick={() => setShowEmojiPicker(!showEmojiPicker)}>😊</button>
+          <button
+            className="emoji-btn"
+            onClick={() => setShowEmojiPicker((prev) => !prev)}
+            title="Insert emoji"
+          >
+            😊
+          </button>
           <input
             type="text"
             value={input}
@@ -211,13 +234,25 @@ const ChatPage = () => {
             onKeyDown={handleKeyPress}
             placeholder="Type a message..."
           />
-          <button onClick={toggleListening}>{isListening ? '🛑' : '🎤'}</button>
-          <button onClick={handleSend}>Send</button>
+          <button
+            className={`mic-btn ${isListening ? 'active' : ''}`}
+            onClick={toggleListening}
+            title="Voice input"
+          >
+            {isListening ? '🛑' : '🎤'}
+          </button>
+          <button onClick={handleSend} title="Send message">📤 Send</button>
         </div>
 
-        {showEmojiPicker && <EmojiPicker onEmojiClick={handleEmojiClick} height={300} />}
+        {showEmojiPicker && (
+          <div className="emoji-picker-wrapper">
+            <EmojiPicker onEmojiClick={handleEmojiClick} height={300} />
+          </div>
+        )}
 
-        <button onClick={handleClearChat}>🧹 Clear Chat</button>
+        <button onClick={handleClearChat} className="clear-chat-btn" title="Clear Conversation History">
+          🧹 Clear Chat
+        </button>
       </div>
     </MainLayout>
   );

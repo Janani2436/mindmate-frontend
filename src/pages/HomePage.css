@@ -1,50 +1,75 @@
-/* client/src/pages/HomePage.css */
+/* ==== Container ==== */
 .homepage {
-  background: #e9efff;
+  background: linear-gradient(135deg, var(--bg), #ecefff);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  animation: fadeIn 0.6s ease;
 }
 
-.white-box {
-  background: white;
-  padding: 3rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+/* ==== Content Box ==== */
+.hero-box {
+  background: #ffffff;
+  padding: 3rem 2rem;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   text-align: center;
-  max-width: 800px;
   width: 100%;
+  max-width: 720px;
+  animation: slideUp 0.7s ease;
 }
 
-.highlight {
-  color: #6b5bff;
-  font-weight: bold;
+/* ==== Heading & Branding ==== */
+.hero-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.6rem;
 }
 
-.button-group {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+}
+
+.brand {
+  color: var(--accent);
+  font-weight: 800;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ==== Button Grid ==== */
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1rem;
-  margin-top: 2rem;
+  padding: 0 0.5rem;
 }
 
+/* ==== Buttons ==== */
 .home-btn {
+  display: block;
   padding: 12px 20px;
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: 12px;
   text-decoration: none;
+  text-align: center;
   color: white;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .home-btn:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
 }
 
+/* ==== Mood-specific Button Colors ==== */
 .home-btn.login {
   background: #6b5bff;
 }
@@ -63,4 +88,26 @@
 
 .home-btn.detect {
   background: #ffaa2b;
+}
+
+/* ==== Animations ==== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(1.01);}
+  to   { opacity: 1; transform: scale(1);}
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px);}
+  to   { opacity: 1; transform: translateY(0);}
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 540px) {
+  .hero-title {
+    font-size: 1.7rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
 }

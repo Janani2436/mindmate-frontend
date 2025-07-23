@@ -1,10 +1,10 @@
-// VideoChat.js
 import React, { useEffect, useRef, useState } from 'react';
 import Lottie from 'lottie-react';
 import animationData from './aiAnimation.json';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { useAuthContext } from '../../context/AuthContext';
 import axios from '../../utils/axiosInstance';
+import './VideoChat.css'; // ✅ Create this file for enhanced styling
 
 const LANGUAGES = {
   en: 'English',
@@ -19,11 +19,20 @@ const LANGUAGES = {
 
 function AnimatedAvatar({ isSpeaking }) {
   const lottieRef = useRef();
+
   useEffect(() => {
     isSpeaking ? lottieRef.current?.play() : lottieRef.current?.stop();
   }, [isSpeaking]);
 
-  return <Lottie lottieRef={lottieRef} animationData={animationData} loop autoplay={false} className="lottie-avatar" />;
+  return (
+    <Lottie
+      lottieRef={lottieRef}
+      animationData={animationData}
+      loop
+      autoplay={false}
+      className="lottie-avatar"
+    />
+  );
 }
 
 const VideoChat = () => {
@@ -32,16 +41,19 @@ const VideoChat = () => {
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isAiReplying, setIsAiReplying] = useState(false);
+
   const videoRef = useRef(null);
   const { token } = useAuthContext();
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
+  // Connect webcam to self-video view
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
       if (videoRef.current) videoRef.current.srcObject = stream;
     });
   }, []);
 
+  // Once speech ended → update message box
   useEffect(() => {
     if (!listening && transcript) setMessage(transcript);
   }, [listening, transcript]);
@@ -57,16 +69,16 @@ const VideoChat = () => {
         { prompt: message, language: selectedLanguage },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       const reply = res.data?.response || '🤖 AI didn’t reply.';
       setAiReply(reply);
       speakReply(reply);
     } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        setAiReply("⏱ The AI is taking too long. Please try again.");
-      } else {
-        console.error('❌ AI Error:', err.message);
-        setAiReply('❌ AI failed to respond.');
-      }
+      const errorText =
+        err.code === 'ECONNABORTED'
+          ? '⏱ The AI is taking too long. Please try again.'
+          : '❌ AI failed to respond.';
+      setAiReply(errorText);
       setIsSpeaking(false);
     } finally {
       setIsAiReplying(false);
@@ -82,6 +94,7 @@ const VideoChat = () => {
     utter.rate = 1;
     utter.onstart = () => setIsSpeaking(true);
     utter.onend = () => setIsSpeaking(false);
+    window.speechSynthesis.cancel(); // prevent overlapping
     window.speechSynthesis.speak(utter);
   };
 
@@ -91,43 +104,58 @@ const VideoChat = () => {
   };
 
   return (
-    <div className="video-chat-container">
-      <h2 className="video-chat-heading">💬 Real-Time Multilingual AI Video Chat</h2>
-
-      <div className="language-selector">
-        🌍 Language:
-        <select value={selectedLanguage} onChange={e => setSelectedLanguage(e.target.value)}>
-          {Object.entries(LANGUAGES).map(([code, label]) => (
-            <option key={code} value={code}>{label}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="video-call-box">
-        <div className="user-video-box">
-          <video ref={videoRef} autoPlay muted playsInline />
-          <p className="video-label">👤 You</p>
+    <div className="video-chat-wrapper">
+      <div className="video-chat-content">
+        <div className="video-box">
+          <div className="user-section">
+            <video ref={videoRef} autoPlay muted playsInline className="user-video" />
+            <p className="label">👤 You</p>
+          </div>
+          <div className="ai-section">
+            <AnimatedAvatar isSpeaking={isSpeaking || isAiReplying} />
+            <p className="label">🤖 MindMate AI</p>
+          </div>
         </div>
-        <div className="ai-video-box">
-          <AnimatedAvatar isSpeaking={isSpeaking || isAiReplying} />
-          <p className="video-label">🤖 MindMate AI</p>
-        </div>
-      </div>
 
-      <div className="chat-box">
-        <strong>AI:</strong> {isAiReplying ? 'Typing...' : aiReply || 'Waiting...'}
-      </div>
+        <div className="chat-section">
+          <div className="ai-response">
+            <strong>AI:</strong> {isAiReplying ? 'Typing...' : aiReply || 'Waiting...'}
+          </div>
 
-      <div className="chat-box">
-        <textarea
-          placeholder="Type or speak your message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          disabled={listening}
-        />
-        <div className="btn-group">
-          <button onClick={handleStartSpeech}>🎤 {listening ? 'Listening...' : 'Speak'}</button>
-          <button onClick={handleSend}>📨 Send</button>
+          <textarea
+            className="chat-input"
+            placeholder="Type or speak your message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            disabled={listening || isAiReplying}
+          />
+
+          <div className="language-mic-bar">
+            <select
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+              disabled={listening}
+              className="language-select"
+            >
+              {Object.entries(LANGUAGES).map(([code, label]) => (
+                <option key={code} value={code}>
+                  🌐 {label}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={handleStartSpeech}
+              disabled={isAiReplying}
+              className="speech-btn"
+            >
+              🎤 {listening ? 'Listening...' : 'Speak'}
+            </button>
+
+            <button onClick={handleSend} disabled={isAiReplying} className="send-btn">
+              📩 Send
+            </button>
+          </div>
         </div>
       </div>
     </div>

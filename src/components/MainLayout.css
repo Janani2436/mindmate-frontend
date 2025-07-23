@@ -1,0 +1,31 @@
+/* MainLayout.css */
+
+.layout-container {
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg);
+  transition: background 0.5s ease-in-out;
+  overflow-x: hidden;
+}
+
+.layout-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
+  box-sizing: border-box;
+  max-width: 920px;
+  margin: 0 auto;
+  transition: all 0.3s ease-in-out;
+  font-family: 'Inter', 'Nunito', 'Segoe UI', sans-serif;
+}
+
+/* Optional: Add fade-in on render */
+.layout-content {
+  animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

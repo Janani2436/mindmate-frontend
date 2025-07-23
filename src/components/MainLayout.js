@@ -1,26 +1,22 @@
 import React from 'react';
 import { useThemeMood } from '../context/ThemeMoodContext';
 import AdaptiveVisual from './AdaptiveVisual';
+import BackgroundFilterOverlay from './BackgroundFilterOverlay';
+import './MainLayout.css'; // base layout styling
 
 const MainLayout = ({ children }) => {
   const { theme } = useThemeMood();
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="layout-container">
       <AdaptiveVisual visualKey={theme.visual} />
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          background: 'var(--bg)',
-          minHeight: '100vh',
-          padding: '2rem 1.5rem',
-          boxSizing: 'border-box',
-          transition: 'background 0.4s ease-in-out',
-        }}
-      >
+
+      {/* 🎨 Mood-based color overlay */}
+      <BackgroundFilterOverlay />
+
+      <main className="layout-content">
         {children}
-      </div>
+      </main>
     </div>
   );
 };
