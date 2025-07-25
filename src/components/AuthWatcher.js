@@ -1,4 +1,4 @@
-// src/components/AuthWatcher.js
+// MindMate frontend - AuthWatcher.js
 import { useEffect } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';

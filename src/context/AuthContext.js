@@ -1,3 +1,4 @@
+// MindMate frontend - AuthContext.js
 import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import jwtDecode from 'jwt-decode';
 

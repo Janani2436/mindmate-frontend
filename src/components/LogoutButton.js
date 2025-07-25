@@ -1,4 +1,4 @@
-// client/src/components/LogoutButton.js
+// MindMate frontend - LogoutButton.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 

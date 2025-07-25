@@ -1,5 +1,6 @@
+// MindMate frontend - BackgroundFilterOverlay.js
 import React from 'react';
-import './BackgroundFilterOverlay.css'; // CSS we'll add next
+import './BackgroundFilterOverlay.css'; 
 
 const BackgroundFilterOverlay = () => {
   return <div className="background-filter-overlay" />;

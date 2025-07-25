@@ -1,8 +1,9 @@
+// MindMate frontend - RegisterPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axiosInstance';
 import { useAuthContext } from '../context/AuthContext';
-import './Auth.css'; // ✅ new shared style file for login & register
+import './Auth.css'; 
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');

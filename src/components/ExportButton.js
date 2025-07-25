@@ -1,4 +1,4 @@
-// src/components/ExportButton.jsx
+// MindMate frontend - ExportButton.js
 import React from 'react';
 import { Download } from 'lucide-react';
 import { downloadChatAsTxt } from '../utils/exportUtils';

@@ -1,3 +1,4 @@
+// MindMate frontend - MoodForm.js
 import React, { useState, useEffect } from 'react';
 import axios from '../utils/axiosInstance';
 
@@ -15,7 +16,7 @@ const MoodForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // ✅ FIXED: Correct route with /api prefix
+      // sends mood note to backend
       const res = await axios.post('/api/mood', { mood, note });
       setMessage('Mood saved successfully!');
       setMood('');

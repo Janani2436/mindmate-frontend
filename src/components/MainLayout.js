@@ -1,8 +1,9 @@
+// MindMate frontend - MainLayout.js
 import React from 'react';
 import { useThemeMood } from '../context/ThemeMoodContext';
 import AdaptiveVisual from './AdaptiveVisual';
 import BackgroundFilterOverlay from './BackgroundFilterOverlay';
-import './MainLayout.css'; // base layout styling
+import './MainLayout.css'; 
 
 const MainLayout = ({ children }) => {
   const { theme } = useThemeMood();
@@ -11,7 +12,7 @@ const MainLayout = ({ children }) => {
     <div className="layout-container">
       <AdaptiveVisual visualKey={theme.visual} />
 
-      {/* 🎨 Mood-based color overlay */}
+      {/* background colour is changed based on emotions */}
       <BackgroundFilterOverlay />
 
       <main className="layout-content">

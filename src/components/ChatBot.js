@@ -1,3 +1,4 @@
+// MindMate frontend - ChatBot.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ChatBot.css';
@@ -27,7 +28,7 @@ const ChatBot = () => {
         message: input,
       });
 
-      // Assuming your Express backend returns { reply: "AI's response" }
+      // handles AI response
       setMessages((prev) => [
         ...prev,
         { sender: 'ai', text: response.data.reply }

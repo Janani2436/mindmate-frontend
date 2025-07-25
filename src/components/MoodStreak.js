@@ -1,3 +1,4 @@
+// MindMate frontend - MoodStreak.js
 import React, { useEffect, useState } from "react";
 import axios from "../utils/axiosInstance";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";

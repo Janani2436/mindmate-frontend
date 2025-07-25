@@ -1,4 +1,4 @@
-// client/src/api/axios.js
+// MindMate frontend - axios.js
 import axios from 'axios';
 
 const axiosInstance = axios.create({
@@ -6,7 +6,8 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-instance.interceptors.request.use((config) => {
+// add a request interceptor
+axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -14,4 +15,5 @@ instance.interceptors.request.use((config) => {
   return config;
 });
 
-export default instance;
+export default axiosInstance;
+

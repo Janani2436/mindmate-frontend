@@ -1,4 +1,4 @@
-// chatAPI.js
+// MindMate frontend - chatAPI.js
 import axios from 'axios';
 import axiosInstance from '../utils/axiosInstance';
 export const fetchChatHistory = async (token) => {

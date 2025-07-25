@@ -1,3 +1,4 @@
+// MindMate frontend - button.jsx
 import React from 'react';
 
 export const Button = ({ children, onClick, className = '', ...props }) => {

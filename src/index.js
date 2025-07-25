@@ -1,7 +1,8 @@
+// MindMate frontend - index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './index.css'; // ✅ Combined global and mood themes
+import './index.css'; 
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './context/AuthContext';
 

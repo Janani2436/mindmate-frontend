@@ -1,10 +1,11 @@
+// MinsdMate frontend - VideoChat.js
 import React, { useEffect, useRef, useState } from 'react';
 import Lottie from 'lottie-react';
 import animationData from './aiAnimation.json';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { useAuthContext } from '../../context/AuthContext';
 import axios from '../../utils/axiosInstance';
-import './VideoChat.css'; // ✅ Create this file for enhanced styling
+import './VideoChat.css'; // enhancement 
 
 const LANGUAGES = {
   en: 'English',
@@ -46,14 +47,14 @@ const VideoChat = () => {
   const { token } = useAuthContext();
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
-  // Connect webcam to self-video view
+  // webcam is connected
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
       if (videoRef.current) videoRef.current.srcObject = stream;
     });
   }, []);
 
-  // Once speech ended → update message box
+  // updates text from speech
   useEffect(() => {
     if (!listening && transcript) setMessage(transcript);
   }, [listening, transcript]);
@@ -94,7 +95,7 @@ const VideoChat = () => {
     utter.rate = 1;
     utter.onstart = () => setIsSpeaking(true);
     utter.onend = () => setIsSpeaking(false);
-    window.speechSynthesis.cancel(); // prevent overlapping
+    window.speechSynthesis.cancel(); // overlapping is prevented
     window.speechSynthesis.speak(utter);
   };
 

@@ -1,7 +1,8 @@
+// MindMate frontend - MoodGraph.js
 import React, { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 import axios from '../utils/axiosInstance';
-import './MoodGraph.css'; // ✅ External style sheet
+import './MoodGraph.css';
 
 const moodColor = {
   happy: '#2ecc71',      // green
@@ -37,7 +38,7 @@ export default function MoodGraph() {
     return <p className="mood-graph-empty">📭 No mood entries available for chart.</p>;
   }
 
-  // Sort chronologically
+  // sorting of moods by date
   const sortedMoods = [...moods].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
   return (

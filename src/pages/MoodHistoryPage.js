@@ -1,3 +1,4 @@
+// MindMate frontend - MoodHistoryPage.js
 import React, { useEffect, useState } from 'react';
 import axios from '../utils/axiosInstance';
 import MoodHistory from '../components/MoodHistory';
@@ -5,7 +6,7 @@ import MoodGraph from '../components/MoodGraph';
 import MoodStreak from '../components/MoodStreak';
 import MainLayout from '../components/MainLayout';
 import { useThemeMood } from '../context/ThemeMoodContext';
-import './MoodHistoryPage.css'; // ✅ We'll build this next
+import './MoodHistoryPage.css'; 
 
 const MoodHistoryPage = () => {
   const [moods, setMoods] = useState([]);
@@ -42,7 +43,7 @@ const MoodHistoryPage = () => {
         <MoodStreak />
         <MoodGraph />
 
-        {/* 🌬️ Wellness card shown for intense emotions */}
+        {/* wellness card is shown */}
         {['sad', 'anxious', 'angry'].includes(mood) && (
           <div className="wellness-card">
             <h4>🌬️ Take a Moment</h4>
@@ -64,7 +65,7 @@ const MoodHistoryPage = () => {
           </div>
         )}
 
-        {/* 🌿 Happy mood message */}
+        {/* message for happy mood*/}
         {mood === 'happy' && (
           <div className="wellness-card happy">
             <h4>🌱 Spread the Good!</h4>

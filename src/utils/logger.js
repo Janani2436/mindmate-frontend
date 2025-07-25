@@ -1,7 +1,8 @@
+// MindMate frontend - Logger,js
 const fs = require('fs');
 const path = require('path');
 
-// Make sure the logs folder exists
+// ensures log directory exists
 const logDirectory = path.join(__dirname, '../logs');
 if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory);
@@ -13,7 +14,7 @@ const log = (message, type = "info") => {
   const timestamp = new Date().toISOString();
   const logMessage = `[${timestamp}] [${type.toUpperCase()}]: ${message}\n`;
 
-  // Console Output with Colors
+  // colour of log message
   const color = {
     info: "\x1b[36m%s\x1b[0m",     // Cyan
     success: "\x1b[32m%s\x1b[0m",  // Green
@@ -23,7 +24,7 @@ const log = (message, type = "info") => {
 
   console.log(color, logMessage.trim());
 
-  // Save to file
+  // files are saved
   fs.appendFile(logFilePath, logMessage, (err) => {
     if (err) console.error('Failed to write to log file:', err);
   });

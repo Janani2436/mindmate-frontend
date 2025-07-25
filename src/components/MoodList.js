@@ -1,4 +1,4 @@
-// client/src/components/MoodList.js
+// MindMate frontend - MoodList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 

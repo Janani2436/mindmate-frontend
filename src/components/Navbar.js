@@ -1,8 +1,9 @@
+// MindMate frontend - Navbar.js
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import LogoutButton from './LogoutButton';
-import './Navbar.css'; // ✅ Styling moved to dedicated file
+import './Navbar.css'; 
 
 const Navbar = () => {
   const { isAuthenticated, loading } = useAuthContext();

@@ -1,6 +1,7 @@
+// MindMate frontend - EmotionDetector.js
 import React, { useEffect, useRef, useState } from 'react';
 import * as faceapi from 'face-api.js';
-import './EmotionDetector.css'; // Create styles here
+import './EmotionDetector.css'; 
 
 const EmotionDetector = () => {
   const videoRef = useRef(null);

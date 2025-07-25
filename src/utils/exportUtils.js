@@ -1,4 +1,4 @@
-// src/utils/exportUtils.js
+// MindMate frontend - exportUtils.js
 
 export const downloadChatAsTxt = () => {
     const chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];

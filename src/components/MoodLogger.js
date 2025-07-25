@@ -1,4 +1,4 @@
-// client/src/components/MoodLogger.js
+// MindMate frontend - MoodLogger.js
 import React, { useState } from 'react';
 
 const MoodLogger = () => {

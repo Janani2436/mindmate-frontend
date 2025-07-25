@@ -1,3 +1,4 @@
+// MindMate frontend - App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -15,14 +16,14 @@ import Navbar from './components/Navbar';
 import { ThemeMoodProvider } from './context/ThemeMoodContext';
 import { AuthProvider } from './context/AuthContext';
 
-import './App.css'; // Global CSS (includes mood variables, fonts, etc.)
+import './App.css'; 
 
 function App() {
   return (
     <ThemeMoodProvider>
       <AuthProvider>
         <Router>
-          {/* ✅ Navbar should have access to both Theme + Auth */}
+          {/* Navbar */}
           <Navbar />
 
           <Routes>
@@ -60,7 +61,7 @@ function App() {
               }
             />
 
-            {/* 🌐 404 Fallback */}
+            {/* returns 404 error */}
             <Route
               path="*"
               element={

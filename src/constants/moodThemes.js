@@ -1,3 +1,4 @@
+// MindMate frontend - moodThemes.js
 const moodThemes = {
   happy: {
     bg: '#FFFDE7',

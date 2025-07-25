@@ -1,3 +1,4 @@
+// MindMate frontend - ThemeMoodContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import moodThemes from '../constants/moodThemes';
 
@@ -6,7 +7,7 @@ const ThemeMoodContext = createContext();
 export const ThemeMoodProvider = ({ children }) => {
   const [mood, setMoodState] = useState('neutral');
 
-  // Load from localStorage once on mount
+  // sets initial mood as neutral
   useEffect(() => {
     const stored = localStorage.getItem('latestMood');
     if (stored && moodThemes[stored]) {
@@ -14,16 +15,16 @@ export const ThemeMoodProvider = ({ children }) => {
     }
   }, []);
 
-  // Apply mood-based styles
+  // theme is changed based on the mood of user
   useEffect(() => {
     const theme = moodThemes[mood] || moodThemes.neutral;
-    const root = document.documentElement; // <html>
+    const root = document.documentElement; 
 
     if (root) {
-      // Apply mood classes + attributes
+      // sets data for mood
       root.setAttribute('data-mood', mood);
 
-      // Set CSS variables for --bg, --primary, --accent
+      
       root.style.setProperty('--bg', theme.bg);
       root.style.setProperty('--primary', theme.primary);
       root.style.setProperty('--accent', theme.accent);

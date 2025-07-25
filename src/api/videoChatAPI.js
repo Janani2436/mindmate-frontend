@@ -1,4 +1,4 @@
-// client/src/api/videoChatApi.js
+// MindMate frontend - videoChatAPI.js
 import axios from 'axios';
 
 export const analyzeEmotion = async (imageBlob) => {
@@ -12,7 +12,7 @@ export const analyzeEmotion = async (imageBlob) => {
       },
     });
 
-    return response.data; // { emotion: 'happy', message: '...' }
+    return response.data; // emotions 
   } catch (error) {
     console.error('Emotion analysis failed:', error);
     throw new Error('Failed to analyze emotion');

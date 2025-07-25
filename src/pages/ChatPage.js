@@ -1,7 +1,8 @@
+// MindMate frontend - ChatPage,js
 import React, { useState, useRef, useEffect } from 'react';
 import axios from '../utils/axiosInstance';
 import EmojiPicker from 'emoji-picker-react';
-import './ChatPage.css'; // ✅ Use enhanced stylesheet
+import './ChatPage.css'; 
 import { useAuthContext } from '../context/AuthContext';
 import { useThemeMood } from '../context/ThemeMoodContext';
 import MainLayout from '../components/MainLayout';
@@ -20,7 +21,7 @@ const ChatPage = () => {
   const { setMood } = useThemeMood();
   const navigate = useNavigate();
 
-  // Supported languages
+  // languages used
   const languages = [
     { code: 'en', label: 'English' },
     { code: 'es', label: 'Spanish' },
@@ -46,7 +47,7 @@ const ChatPage = () => {
     }
   };
 
-  // Fetch chat history
+  // chat history is loaded
   useEffect(() => {
     const loadMessages = async () => {
       try {
@@ -81,12 +82,12 @@ const ChatPage = () => {
     loadMessages();
   }, [token, navigate]);
 
-  // Save to local storage
+  // messages are saved to local storage
   useEffect(() => {
     localStorage.setItem('mindmate_messages', JSON.stringify(messages));
   }, [messages]);
 
-  // Auto-scroll
+  // scrolls to bottom of the chat
   useEffect(() => {
     chatBoxRef.current?.scrollTo({
       top: chatBoxRef.current.scrollHeight,
@@ -94,7 +95,7 @@ const ChatPage = () => {
     });
   }, [messages]);
 
-  // Speech Recognition
+  // speech recognition is set up
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;

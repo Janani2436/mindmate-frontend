@@ -1,9 +1,9 @@
-// axiosInstance.js
+// MindMate frontend - RegisterPage.js
 import axios from 'axios';
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000',
-  timeout: 30000, // Updated from 10000
+  timeout: 30000, // 30 seconds timeout
 });
 
 instance.interceptors.request.use(

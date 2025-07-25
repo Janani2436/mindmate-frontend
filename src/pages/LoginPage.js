@@ -1,6 +1,7 @@
+// MindMate frontend - LoginPage.js
 import React from 'react';
 import Login from '../components/Login';
-import './Auth.css'; // Ensure shared styles apply here too
+import './Auth.css'; 
 
 const LoginPage = () => {
   return <Login />;

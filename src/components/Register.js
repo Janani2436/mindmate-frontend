@@ -1,3 +1,4 @@
+// MindMate frontend - Register.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axiosInstance';
@@ -9,7 +10,7 @@ const Register = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate(); // ✅
+  const navigate = useNavigate(); 
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -25,7 +26,7 @@ const Register = () => {
       setUsername('');
       setPassword('');
 
-      setTimeout(() => navigate('/chat'), 1000); // ✅ redirect to /chat
+      setTimeout(() => navigate('/chat'), 1000); // redirects to chat page
     } catch (err) {
       console.error('Registration Error:', err);
       setMessage(
